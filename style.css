@@ -1,0 +1,37 @@
+body {
+    margin: 0;
+}
+.search {
+    position: absolute;
+    width: 500px;
+    height: 0px;
+    background-color: #a3a3a3;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    border-radius: 0px 0px 10px 10px;
+    text-align: center;
+    overflow: hidden;
+    transition: 500ms;
+}
+.show {
+    height: 120px;
+}
+.input {
+    position: relative;
+    width: 300px;
+    height: 40px;
+    margin-top: 35px;
+    background-color: #dddddd;
+    border: none;
+    border-radius: 5px;
+    text-indent: 10px;
+    font-size: 16px;
+    outline: none;
+}
+.input:focus {
+    outline: none;
+}
+.input:active {
+    outline: none;
+}

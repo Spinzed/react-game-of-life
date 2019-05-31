@@ -1,0 +1,4 @@
+.vscode/
+libraries/
+test/
+*.code-workspace
