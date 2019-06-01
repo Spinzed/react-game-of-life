@@ -4,21 +4,17 @@ class Game {
     this.cellWidth = 20;
     this.isStarted = false;
     this.grid = createGraphics(window.outerWidth, window.innerHeight);
+    this.speed = 200;
   }
 
   start() {
     this.readyCanvas();
-    this.runtimeInterval = setInterval(() => {
-      if (this.isStarted) {
-        this.readyCanvas();
-        game.update();
-      }
-    }, 500);
-    for (let i = 0; i < 100; i++) {
-      let randx = Math.round(Math.random() * 13);
-      let randy = Math.round(Math.random() * 13);
-      let x = this.getX((window.outerWidth - 90) / 2) + randx;
-      let y = this.getY((window.innerHeight - 180) / 2) + randy;
+    this.setRefreshInterval();
+    for (let i = 0; i < 300; i++) {
+      let randx = Math.round(Math.random() * 30);
+      let randy = Math.round(Math.random() * 30);
+      let x = this.getX((window.outerWidth - 600) / 2) + randx;
+      let y = this.getY((window.innerHeight - 700) / 2) + randy;
       let cell = new Cell(x, y);
       this.aliveCells.push(cell);
     }
@@ -115,6 +111,21 @@ class Game {
     return count;
   }
 
+  setRefreshInterval(speed) {
+    if (speed != undefined) this.speed = speed;
+    clearInterval(this.runtimeInterval);
+    this.runtimeInterval = setInterval(() => {
+      if (this.isStarted) {
+        this.readyCanvas();
+        game.update();
+      }
+    }, this.speed);
+  }
+
+  updateSpeed(newSpeed) {
+    this.setRefreshInterval(1000 / newSpeed);
+  }
+
   getX(coord) { // transfer pixels to grid row
     let filter = coord - (coord % this.cellWidth);
     return filter / this.cellWidth + 1;
@@ -126,8 +137,24 @@ class Game {
   }
 
   stop() { // oh my what could this possibly do??
-    this.isStarted = false;
+    if (!this.isStarted) return; else this.isStarted = false;
     clearInterval(this.runtimeInterval);
+  }
+
+  continue() {
+    if (this.isStarted) return; else this.isStarted = true;
+    this.readyCanvas();
+    game.update();
+    this.runtimeInterval = setInterval(() => {
+      if (this.isStarted) {
+        this.readyCanvas();
+        game.update();
+      }
+    }, this.speed);
+  }
+
+  togglePause() {
+    if (this.isStarted) this.stop(); else this.continue();
   }
 
   restart() {

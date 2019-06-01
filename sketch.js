@@ -15,6 +15,6 @@ function mousePressed() {
     game.restart();
   }
   if (mouseButton == "right") {
-    game.stop();
+    game.togglePause();
   }
 }
