@@ -4,19 +4,29 @@
     <meta charset="UTF-8">
     <link rel="stylesheet" href="style.css">
     <title>Game of Life</title>
-</head>
-
-<body>
-    <div id="search_container" class="search">
-        <input id="search" type="text" class="input" wrap="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Enter command here..">
-        <div id="error" class="error"></div>
-    </div>
+    <!-- v JS v files -->
     <script src="libraries/p5.js"></script>
     <script src="libraries/p5.dom.js"></script>
     <script src="libraries/p5.sound.js"></script>
+    <!-- ^ p5.js ^ -->
+    <script src="https://unpkg.com/react@16/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js" crossorigin></script>
+    <!-- ^ React.js ^ -->
     <script src="game.js"></script>
-    <script src="commands.js"></script>
     <script src="sketch.js"></script>
+    <script src="interface/interface.js"></script>
+    <script src="interface/command-line.js"></script>
+    <!-- ^ Game logic ^ -->
+</head>
+
+<body>
+    <div id="interface"></div>
+    <script>
+        ReactDOM.render(
+            React.createElement(Interface),
+            document.getElementById("interface")
+        )
+    </script>
 </body>
 
 </html>

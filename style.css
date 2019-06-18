@@ -7,7 +7,6 @@ body * {
 .search {
     position: absolute;
     width: 500px;
-    height: 0px;
     background-color: #a3a3a3;
     left: 0;
     right: 0;
@@ -16,9 +15,6 @@ body * {
     text-align: center;
     overflow: hidden;
     transition: 500ms;
-}
-.show {
-    height: 120px;
 }
 .input {
     position: relative;
