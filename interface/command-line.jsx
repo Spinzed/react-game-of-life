@@ -3,14 +3,16 @@ class CommandLine extends React.Component {
     super(props);
     this.state = {
       input: "",
-      error: false,
-      error_message: ""
+      status_render: false,
+      status_type: "",
+      status_message: ""
     }
     this.searchInput = React.createRef();
     this.height = "0px";
     this.onTransition = this.onTransition.bind(this);
     this.onValueChange = this.onValueChange.bind(this);
     this.keyDown = this.keyDown.bind(this);
+    this.renderStatus = this.renderStatus.bind(this);
   }
   onTransition() {
     if (this.height == "0px") {
@@ -24,9 +26,10 @@ class CommandLine extends React.Component {
     })
   }
   keyDown(event) {
-    this.setState({ error: false });
+    clearTimeout(this.statusRemoveTimeout);
+    this.setState({ status_render: false });
     if (!event.shiftKey && event.key == "Enter") {
-      let reset = true;
+      let success = true;
       let args = event.target.value.split(" ");
       let command = args.shift();
 
@@ -49,23 +52,32 @@ class CommandLine extends React.Component {
           if (args[0] > 0 && args[0] <= 30) {
             game.updateSpeed(args[0]);
           } else {
-            this.setState({ 
-              error: true,
-              error_message: "New speed value is not valid or doesn't exist, it must be a value between 0 and 30"
-            });
-            reset = false;
+            this.renderStatus("error", "New speed value is not valid or doesn't exist, it must be a value between 0 and 30")
+            success = false;
           }
           break;
         default:
-          this.setState({
-            error: true,
-            error_message: "The command doesnt exist"
-          });
-          reset = false;
+          this.renderStatus("error", "The command doesn't exist")
+          success = false;
       }
-      if (reset) {
-        event.target.value = "";
+      if (success) {
+        event.target.value = ""
+        this.renderStatus("status", "Command successfully executed: " + command)
       }
+    }
+  }
+  renderStatus(type, message) {
+    this.setState({
+      status_render: true,
+      status_type: type,
+      status_message: message
+    })
+    if (type == "status") {
+      this.statusRemoveTimeout = setTimeout(() => {
+        this.setState({
+          status_render: false,
+        })
+      }, 5000);
     }
   }
   render() {
@@ -85,15 +97,15 @@ class CommandLine extends React.Component {
       return (
         <div id="search_container" className="search" style={{ height: this.height }} onTransitionEnd={ this.onTransition }>
           <input id="search" type="text" className="input" autoFocus onChange={ this.onValueChange } onKeyDown={ this.keyDown } wrap="off" autoCorrect="off" autoCapitalize="off" spellCheck="false" placeholder="Enter command here.."></input>
-          <CommandLineError render={ this.state.error } message={ this.state.error_message }/>
+          <CommandLineStatus render={ this.state.status_render } status={ this.state.status_type } message={ this.state.status_message }/>
         </div>
       )
     } else return null;
   }
 }
 
-class CommandLineError extends React.Component {
-  constructor(props) { // expects render (bool) and message (string)
+class CommandLineStatus extends React.Component {
+  constructor(props) { // expects render (bool), status (string) and message (string)
     super(props);
     this.opacity = "0";
   }
@@ -107,8 +119,9 @@ class CommandLineError extends React.Component {
       this.opacity = "0";
     }
     if (this.props.render) {
+      this.props.status == "error" ? this.color = "#d13c3c" : this.color = "#1933b7";
       return (
-        <div id="error" className="error" style={{opacity: this.opacity}}>{(this.props.message)}</div>
+        <div id="error" className="cmd_status" style={{ opacity: this.opacity, color: this.color }}>{( this.props.message )}</div>
       )
     } else return null;
   }

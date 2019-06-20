@@ -34,10 +34,9 @@ body * {
 .input:active {
     outline: none;
 }
-.error {
+.cmd_status {
     position: relative;
     font-size: 14px;
-    color: #d13c3c;
     width: 300px;
     margin: 10px auto 0px auto;
     opacity: 0;
