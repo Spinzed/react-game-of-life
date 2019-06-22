@@ -16,11 +16,10 @@ body * {
     overflow: hidden;
     transition: 500ms;
 }
-.input {
+.cmd_line {
     position: relative;
     width: 300px;
     height: 40px;
-    margin-top: 30px;
     background-color: #dddddd;
     border: none;
     border-radius: 5px;
@@ -42,4 +41,18 @@ body * {
     opacity: 0;
     transition: opacity 200ms;
     overflow: hidden;
+}
+.new_game_prompt {
+    position: absolute;
+    width: 500px;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 100;
+    margin: auto auto;
+    border-radius: 10px;
+    background-color: #9cb7b9;
+    height: 200px;
+    text-align: center;
+    line-height: 100px;
 }

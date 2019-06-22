@@ -6,11 +6,12 @@ function setup() {
     event.preventDefault();
   });
   frameRate(60);
-  game = new Game();
+  game = new Game(Math.random() * 100);
   game.start();
 }
 
 function mousePressed() {
+  if (game.isFrozen) return;
   if (mouseButton == "left") {
     game.restart();
   }

@@ -1,18 +1,26 @@
 class Game {
-  constructor() {
+  constructor(seed) {
+    this.seed = seed;
     this.aliveCells = [];
     this.cellWidth = 20;
     this.isStarted = false;
     this.grid = createGraphics(window.outerWidth, window.innerHeight);
     this.speed = 200;
+    this.isFrozen = false; // this is used to freeze the game when opening a new game prompt
+  }
+
+  newGame(newSeed) {
+    this.seed = this.rand(newSeed);
+    this.start();
   }
 
   start() {
+    this.aliveCells = [];
     this.readyCanvas();
     this.setRefreshInterval();
     for (let i = 0; i < 300; i++) {
-      let randx = Math.round(Math.random() * 30);
-      let randy = Math.round(Math.random() * 30);
+      let randx = Math.round(this.rand(this.seed + 100 + i) * 30);
+      let randy = Math.round(this.rand(this.seed + i) * 30);
       let x = this.getX((window.outerWidth - 600) / 2) + randx;
       let y = this.getY((window.innerHeight - 700) / 2) + randy;
       let cell = new Cell(x, y);
@@ -31,9 +39,7 @@ class Game {
   }
 
   update() {
-    if (!this.isStarted) {
-      return;
-    }
+    if (!this.isStarted && !game.isFrozen) return;
     let dead = [];
     let revived = [];
 
@@ -53,7 +59,6 @@ class Game {
     for (let i = 0; i < this.aliveCells.length; i++) {
       let cell = this.aliveCells[i];
       let boyz = this.getBoyzInDaHood(cell);
-      //console.log(this.aliveCells, cell, boyz)
       if (boyz > 3 || boyz < 2) {
         dead.push(i);
       }
@@ -115,7 +120,7 @@ class Game {
     if (speed != undefined) this.speed = speed;
     clearInterval(this.runtimeInterval);
     this.runtimeInterval = setInterval(() => {
-      if (this.isStarted) {
+      if (this.isStarted && !game.isFrozen) {
         this.readyCanvas();
         game.update();
       }
@@ -146,7 +151,7 @@ class Game {
     this.readyCanvas();
     game.update();
     this.runtimeInterval = setInterval(() => {
-      if (this.isStarted) {
+      if (this.isStarted || game.isFrozen) {
         this.readyCanvas();
         game.update();
       }
@@ -159,7 +164,6 @@ class Game {
 
   restart() {
     this.stop();
-    this.aliveCells = [];
     this.start();
   }
 
@@ -181,6 +185,11 @@ class Game {
       }
     });
     return contains;
+  }
+
+  rand(seed) {
+    var x = Math.sin(seed) * 1000000;
+    return x - Math.floor(x);
   }
 }
 

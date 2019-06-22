@@ -1,12 +1,13 @@
 class CommandLine extends React.Component {
-  constructor(props) { // expecting render (bool)
+  constructor(props) { // expecting render (bool) and onNewGame (handler function)
     super(props);
     this.state = {
-      input: "",
+      input_value: "",
       status_render: false,
       status_type: "",
       status_message: ""
     }
+    this.cmd_line = React.createRef();
     this.searchInput = React.createRef();
     this.height = "0px";
     this.onTransition = this.onTransition.bind(this);
@@ -22,7 +23,7 @@ class CommandLine extends React.Component {
   }
   onValueChange(event) {
     this.setState({
-      input: event.target.value
+      input_value: event.target.value
     })
   }
   keyDown(event) {
@@ -30,10 +31,13 @@ class CommandLine extends React.Component {
     this.setState({ status_render: false });
     if (!event.shiftKey && event.key == "Enter") {
       let success = true;
-      let args = event.target.value.split(" ");
+      let args = this.state.input_value.split(" ");
       let command = args.shift();
 
       switch (command) {
+        case "new":
+          this.props.onNewGame(); // calls a handler
+          break;
         case "reset":
         case "restart":
           game.restart();
@@ -43,8 +47,6 @@ class CommandLine extends React.Component {
           game.stop();
           break;
         case "start":
-          game.start();
-          break;
         case "continue":
           game.continue();
           break;
@@ -62,6 +64,7 @@ class CommandLine extends React.Component {
       }
       if (success) {
         event.target.value = ""
+        this.setState({ input_value : event.target.value })
         this.renderStatus("status", "Command successfully executed: " + command)
       }
     }
@@ -80,6 +83,9 @@ class CommandLine extends React.Component {
       }, 5000);
     }
   }
+  componentDidUpdate() {
+    this.cmd_line.current != null ? this.cmd_line.current.focus() : null; // had to use this instead of autofocus cuz it wouldnt focus it when the component is already shown
+  }
   render() {
     if (this.props.render) {
       this.isActive = true;
@@ -95,9 +101,9 @@ class CommandLine extends React.Component {
     // ^^ this code above updates css thingys
     if (this.isActive) {
       return (
-        <div id="search_container" className="search" style={{ height: this.height }} onTransitionEnd={ this.onTransition }>
-          <input id="search" type="text" className="input" autoFocus onChange={ this.onValueChange } onKeyDown={ this.keyDown } wrap="off" autoCorrect="off" autoCapitalize="off" spellCheck="false" placeholder="Enter command here.."></input>
-          <CommandLineStatus render={ this.state.status_render } status={ this.state.status_type } message={ this.state.status_message }/>
+        <div id="search_container" className="search" style={{ height: this.height }} onTransitionEnd={this.onTransition}>
+          <input type="text" ref={this.cmd_line} style={{ margin: "30px 0 0 0" }} id="cmd_line" className="cmd_line" onChange={this.onValueChange} onKeyDown={this.keyDown} wrap="off" autoCorrect="off" autoCapitalize="off" spellCheck="false" placeholder="Enter command here.."/>
+          <CommandLineStatus render={this.state.status_render} status={this.state.status_type} message={this.state.status_message} />
         </div>
       )
     } else return null;
