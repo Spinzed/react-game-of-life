@@ -1,11 +1,8 @@
 class CommandLine extends React.Component {
-  constructor(props) { // expecting render (bool) and onNewGame (handler function)
+  constructor(props) { // expecting render (bool), onShowElement (handler function) and onClose (handler function)
     super(props);
     this.state = {
       input_value: "",
-      status_render: false,
-      status_type: "",
-      status_message: ""
     }
     this.cmd_line = React.createRef();
     this.searchInput = React.createRef();
@@ -27,16 +24,15 @@ class CommandLine extends React.Component {
     })
   }
   keyDown(event) {
-    clearTimeout(this.statusRemoveTimeout);
-    this.setState({ status_render: false });
+    this.props.onClose("InfoToast");
     if (!event.shiftKey && event.key == "Enter") {
       let success = true;
-      let args = this.state.input_value.split(" ");
+      let args = this.state.input_value.toLowerCase().split(" ");
       let command = args.shift();
 
       switch (command) {
         case "new":
-          this.props.onNewGame(); // calls a handler
+          this.props.onShowElement("NewGamePrompt"); // calls the handler
           break;
         case "reset":
         case "restart":
@@ -45,6 +41,9 @@ class CommandLine extends React.Component {
         case "stop":
         case "pause":
           game.stop();
+          break;
+        case "test":
+          this.props.onShowElement("InfoToast");
           break;
         case "start":
         case "continue":
@@ -65,52 +64,41 @@ class CommandLine extends React.Component {
       if (success) {
         event.target.value = ""
         this.setState({ input_value : event.target.value })
-        this.renderStatus("status", "Command successfully executed: " + command)
+        this.renderStatus("info", "Command successfully executed: " + command);
       }
     }
   }
   renderStatus(type, message) {
-    this.setState({
-      status_render: true,
-      status_type: type,
-      status_message: message
-    })
-    if (type == "status") {
-      this.statusRemoveTimeout = setTimeout(() => {
-        this.setState({
-          status_render: false,
-        })
-      }, 5000);
+    this.props.onShowElement("InfoToast", {type: type, message: message});
+  }
+  componentWillUpdate(newProps) { // newProps are updated props, this.props are old ones
+    if (newProps.render) {
+      this.isActive = true;
+    } else {
+      this.height = "0px";
+    }
+    if (newProps.render && this.isActive && this.height == "0px") {
+      setTimeout(() => {
+        this.height = "120px";
+        this.forceUpdate();
+      }, 0)
     }
   }
   componentDidUpdate() {
     this.cmd_line.current != null ? this.cmd_line.current.focus() : null; // had to use this instead of autofocus cuz it wouldnt focus it when the component is already shown
   }
   render() {
-    if (this.props.render) {
-      this.isActive = true;
-    } else {
-      this.height = "0px";
-    }
-    if (this.isActive && this.height == "0px" && this.props.render) {
-      setTimeout(() => {
-        this.height = "120px";
-        this.forceUpdate();
-      }, 0)
-    }
-    // ^^ this code above updates css thingys
     if (this.isActive) {
       return (
-        <div id="search_container" className="search" style={{ height: this.height }} onTransitionEnd={this.onTransition}>
-          <input type="text" ref={this.cmd_line} style={{ margin: "30px 0 0 0" }} id="cmd_line" className="cmd_line" onChange={this.onValueChange} onKeyDown={this.keyDown} wrap="off" autoCorrect="off" autoCapitalize="off" spellCheck="false" placeholder="Enter command here.."/>
-          <CommandLineStatus render={this.state.status_render} status={this.state.status_type} message={this.state.status_message} />
+        <div id="search_container" className="cmd_line" style={{ height: this.height }} onTransitionEnd={this.onTransition}>
+          <input type="text" id="cmd_line" className="input_standard" ref={this.cmd_line} style={{ margin: "30px 0 0 0" }} onChange={this.onValueChange} onKeyDown={this.keyDown} wrap="off" autoCorrect="off" autoCapitalize="off" spellCheck="false" placeholder="Enter command here.."/>
         </div>
       )
     } else return null;
   }
 }
 
-class CommandLineStatus extends React.Component {
+class CommandLineStatus extends React.Component { // old unused component, kept for just in case
   constructor(props) { // expects render (bool), status (string) and message (string)
     super(props);
     this.opacity = "0";

@@ -15,11 +15,10 @@ class NewGamePrompt extends React.Component {
   keyDown() {
     if (event.key == "Enter" && !event.shiftKey) {
       if (this.state.input_value == "") {
-        this.props.onClose();
+        this.props.onClose("NewGamePrompt");
         return;
       }
       let seed = int(this.state.input_value);
-      console.log(seed)
       if (isNaN(seed) || seed == Infinity) {
         console.log("Not a valid number");
         return;
@@ -37,7 +36,7 @@ class NewGamePrompt extends React.Component {
       return (
         <div id="new_game_prompt" className="new_game_prompt">
           <div>Set the seed</div>
-          <input type="text" id="seed" className="cmd_line" onChange={this.onValueChange} onKeyDown={this.keyDown} autoFocus wrap="off" autoCorrect="off" autoCapitalize="off" spellCheck="false"/>
+          <input type="text" id="seed" className="input_standard" onChange={this.onValueChange} onKeyDown={this.keyDown} autoFocus wrap="off" autoCorrect="off" autoCapitalize="off" spellCheck="false"/>
         </div>
       )
     } else return null;
