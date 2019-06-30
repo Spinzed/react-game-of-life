@@ -42,9 +42,6 @@ class CommandLine extends React.Component {
         case "pause":
           game.stop();
           break;
-        case "test":
-          this.props.onShowElement("InfoToast");
-          break;
         case "start":
         case "continue":
           game.continue();
@@ -74,14 +71,14 @@ class CommandLine extends React.Component {
   componentWillUpdate(newProps) { // newProps are updated props, this.props are old ones
     if (newProps.render) {
       this.isActive = true;
+      if (this.height == "0px") {
+        setTimeout(() => {
+          this.height = "120px";
+          this.forceUpdate();
+        }, 0)
+      }
     } else {
       this.height = "0px";
-    }
-    if (newProps.render && this.isActive && this.height == "0px") {
-      setTimeout(() => {
-        this.height = "120px";
-        this.forceUpdate();
-      }, 0)
     }
   }
   componentDidUpdate() {

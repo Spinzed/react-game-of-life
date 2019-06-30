@@ -4,17 +4,23 @@ class InfoToast extends React.Component {
     this.onTransition = this.onTransition.bind(this);
   }
   componentWillUpdate(newProps) {
+    this.oldProps = this.props;
     clearTimeout(this.statusRemoveTimeout);
     if (newProps.render) {
-      this.isActive = true;
+      if (this.isRetracting) {
+        this.isOnHold = true;
+      } else {
+        this.isActive = true;
+        if (this.height == "0px") {
+          setTimeout(() => {
+            this.height = "120px";
+            this.forceUpdate();
+          }, 0)
+        }
+      }
     } else {
       this.height = "0px";
-    }
-    if (this.isActive && this.height == "0px" && newProps.render) {
-      setTimeout(() => {
-        this.height = "120px";
-        this.forceUpdate();
-      }, 0)
+      this.isActive ? this.isRetracting = true : null;
     }
     newProps.type == "error" ? this.color = "#9e2525" : this.color = "#1933b7";
   }
@@ -28,14 +34,17 @@ class InfoToast extends React.Component {
   onTransition() {
     if (this.height == "0px") {
       this.isActive = false;
+      this.isRetracting = false;
       this.forceUpdate();
     }
   }
   render() {
+    let currentProps = {};
+    this.isRetracting ? currentProps = this.oldProps : currentProps = this.props;
     if (this.isActive) {
       return (
         <div id="info_toast" className="info_toast" style={{ color: this.color, height: this.height }} onTransitionEnd={this.onTransition}>
-          <div style={{ padding: "35px 0 0 0" }}>{this.props.message}</div>
+          <div style={{ padding: "35px 0 0 0" }}>{currentProps.message}</div>
         </div>
       )
     } else return null;

@@ -24,7 +24,7 @@ class NewGamePrompt extends React.Component {
         return;
       }
       game.newGame(seed);
-      this.props.onClose();
+      this.props.onClose("NewGamePrompt");
       console.log("valid number");
     }
     if (event.key == "Escape") {
