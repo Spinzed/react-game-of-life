@@ -44,7 +44,7 @@ class InfoToast extends React.Component {
     if (this.isActive) {
       return (
         <div id="info_toast" className="info_toast" style={{ color: this.color, height: this.height }} onTransitionEnd={this.onTransition}>
-          <div style={{ padding: "35px 0 0 0" }}>{currentProps.message}</div>
+          <p>{currentProps.message}</p>
         </div>
       )
     } else return null;

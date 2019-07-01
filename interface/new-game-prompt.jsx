@@ -36,7 +36,7 @@ class NewGamePrompt extends React.Component {
       return (
         <div id="new_game_prompt" className="new_game_prompt">
           <div>Set the seed</div>
-          <input type="text" id="seed" className="input_standard" onChange={this.onValueChange} onKeyDown={this.keyDown} autoFocus wrap="off" autoCorrect="off" autoCapitalize="off" spellCheck="false"/>
+          <input type="text" id="seed" className="input_standard" onChange={this.onValueChange} onKeyDown={this.keyDown} autoFocus wrap="off" autoCorrect="off" autoCapitalize="off" spellCheck="false" autoComplete="off"/>
         </div>
       )
     } else return null;

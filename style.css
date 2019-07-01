@@ -2,7 +2,7 @@ body {
     margin: 0;
 }
 body * {
-    font-family: arial;
+    font-family: "Exo 2", arial !important;
 }
 .cmd_line {
     position: absolute;
@@ -58,6 +58,7 @@ body * {
 }
 .info_toast {
     position: absolute;
+    display: flex;
     margin: 0 auto;
     width: 400px;
     height: 80px;
@@ -71,4 +72,10 @@ body * {
     box-sizing: border-box;
     overflow: hidden;
     transition: 350ms;
+}
+.info_toast p {
+    position: relative;
+    display: flex;
+    margin: auto auto;
+    padding-bottom: 5%;
 }

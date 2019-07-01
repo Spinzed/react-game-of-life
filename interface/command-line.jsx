@@ -5,7 +5,6 @@ class CommandLine extends React.Component {
       input_value: "",
     }
     this.cmd_line = React.createRef();
-    this.searchInput = React.createRef();
     this.height = "0px";
     this.onTransition = this.onTransition.bind(this);
     this.onValueChange = this.onValueChange.bind(this);
@@ -22,11 +21,11 @@ class CommandLine extends React.Component {
     this.setState({
       input_value: event.target.value
     })
+    this.props.onClose("InfoToast");
   }
   keyDown(event) {
-    this.props.onClose("InfoToast");
     if (!event.shiftKey && event.key == "Enter") {
-      let success = true;
+      let renderSucess = true;
       let args = this.state.input_value.toLowerCase().split(" ");
       let command = args.shift();
 
@@ -46,19 +45,25 @@ class CommandLine extends React.Component {
         case "continue":
           game.continue();
           break;
+        case "seed":
+          this.renderStatus("info", "Seed: " + game.seed);
+          renderSucess = false;
+          event.target.value = ""
+          this.setState({ input_value: event.target.value })
+          break;
         case "speed":
           if (args[0] > 0 && args[0] <= 30) {
             game.updateSpeed(args[0]);
           } else {
             this.renderStatus("error", "New speed value is not valid or doesn't exist, it must be a value between 0 and 30")
-            success = false;
+            renderSucess = false;
           }
           break;
         default:
           this.renderStatus("error", "The command doesn't exist")
-          success = false;
+          renderSucess = false;
       }
-      if (success) {
+      if (renderSucess) {
         event.target.value = ""
         this.setState({ input_value : event.target.value })
         this.renderStatus("info", "Command successfully executed: " + command);
@@ -67,6 +72,9 @@ class CommandLine extends React.Component {
   }
   renderStatus(type, message) {
     this.props.onShowElement("InfoToast", {type: type, message: message});
+  }
+  shouldComponentUpdate(newProps) { // prevent unnecesarry rerenders
+    if (this.props.render != newProps.render) return true; else return false;
   }
   componentWillUpdate(newProps) { // newProps are updated props, this.props are old ones
     if (newProps.render) {
@@ -88,7 +96,7 @@ class CommandLine extends React.Component {
     if (this.isActive) {
       return (
         <div id="search_container" className="cmd_line" style={{ height: this.height }} onTransitionEnd={this.onTransition}>
-          <input type="text" id="cmd_line" className="input_standard" ref={this.cmd_line} style={{ margin: "30px 0 0 0" }} onChange={this.onValueChange} onKeyDown={this.keyDown} wrap="off" autoCorrect="off" autoCapitalize="off" spellCheck="false" placeholder="Enter command here.."/>
+          <input type="text" id="cmd_line" className="input_standard" ref={this.cmd_line} style={{ margin: "30px 0 0 0" }} onChange={this.onValueChange} onKeyDown={this.keyDown} wrap="off" autoCorrect="off" autoCapitalize="off" spellCheck="false" autoComplete="off" placeholder="Enter command here.."/>
         </div>
       )
     } else return null;

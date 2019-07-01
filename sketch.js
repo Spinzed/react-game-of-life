@@ -6,7 +6,7 @@ function setup() {
     event.preventDefault();
   });
   frameRate(60);
-  game = new Game(Math.random() * 100);
+  game = new Game(round(Math.random() * 1000000));
   game.start();
 }
 
