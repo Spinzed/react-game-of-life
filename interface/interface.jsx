@@ -28,26 +28,26 @@ class Interface extends React.Component {
   }
   showElement(element, props = undefined) { // props to pass down are optional, they dont have to exist
     if (element == "CommandLine") {
-      this.setState({ commandLine: true });
+      if (!this.state.commandLine) this.setState({ commandLine: true });
     } else if (element == "NewGamePrompt") {
       game.isFrozen = true;
-      this.setState({ newGamePrompt: true });
+      if (!this.state.newGamePrompt) this.setState({ newGamePrompt: true });
     } else if (element == "InfoToast") {
       this.infoToastType = props.type;
       this.infoToastMessage = props.message;
-      this.setState({ infoToast: true });
+      if (!this.state.infoToast) this.setState({ infoToast: true });
     } else {
       throw "Invalid element";
     }
   }
   hideElement(element) {
     if (element == "CommandLine") {
-      this.setState({ commandLine: false });
+      if (this.state.commandLine) this.setState({ commandLine: false });
     } else if (element == "NewGamePrompt") {
       game.isFrozen = false;
-      this.setState({ newGamePrompt: false });
+      if (this.state.newGamePrompt) this.setState({ newGamePrompt: false });
     } else if (element == "InfoToast") {
-      this.setState({ infoToast: false });
+      if (this.state.infoToast) this.setState({ infoToast: false });
     } else {
       throw "Invalid element";
     }

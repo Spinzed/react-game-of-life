@@ -28,7 +28,7 @@ class NewGamePrompt extends React.Component {
       console.log("valid number");
     }
     if (event.key == "Escape") {
-      this.props.onClose();
+      this.props.onClose(); // this doesnt seem right, will test it out later
     }
   }
   render(){

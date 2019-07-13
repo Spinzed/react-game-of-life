@@ -1,0 +1,40 @@
+[
+    {
+        "name": "new",
+        "args": []
+    },
+    {
+        "name": "reset",
+        "args": []
+    },
+    {
+        "name": "restart",
+        "args": []
+    },
+    {
+        "name": "stop",
+        "args": []
+    },
+    {
+        "name": "pause",
+        "args": []
+    },
+    {
+        "name": "start",
+        "args": []
+    },
+    {
+        "name": "continue",
+        "args": []
+    },
+    {
+        "name": "seed",
+        "args": []
+    },
+    {
+        "name": "speed",
+        "args": [
+            "<speed>"
+        ]
+    }
+]

@@ -1,21 +1,24 @@
 body {
     margin: 0;
 }
+
 body * {
     font-family: "Exo 2", arial !important;
 }
+
 .cmd_line {
     position: absolute;
     width: 500px;
     background-color: #a3a3a3;
-    left: 0;
-    right: 0;
-    margin: 0 auto;
     border-radius: 0px 0px 18px 18px;
     text-align: center;
-    overflow: hidden;
+}
+
+.cmd_line,
+.cmd_line_outer {
     transition: 500ms;
 }
+
 .cmd_status {
     position: relative;
     font-size: 14px;
@@ -25,6 +28,32 @@ body * {
     transition: opacity 200ms;
     overflow: hidden;
 }
+
+.cmd_suggestion_box {
+    position: absolute;
+    width: 300px;
+    background: #464647;
+}
+
+.cmd_suggestion_box ul {
+    position: relative;
+    padding: 0;
+    margin: 0;
+    list-style-type: none;
+}
+
+.cmd_suggestion_box li {
+    position: relative;
+    display: flex;
+    height: 52px;
+    margin-bottom: 2px;
+    background: #505053;
+    color: white;
+    top: 0;
+    bottom: 0;
+    text-align: center;
+}
+
 .input_standard {
     position: relative;
     width: 300px;
@@ -36,12 +65,15 @@ body * {
     font-size: 16px;
     outline: none;
 }
+
 .input_standard:focus {
     outline: none;
 }
+
 .input_standard:active {
     outline: none;
 }
+
 .new_game_prompt {
     position: absolute;
     width: 500px;
@@ -49,14 +81,15 @@ body * {
     right: 0;
     top: 0;
     bottom: 100;
-    margin: auto auto;
+    margin: auto;
     border-radius: 15px;
     background-color: #9cb7b9;
     height: 200px;
     text-align: center;
     line-height: 100px;
 }
-.info_toast {
+
+.info_toast { /* inherit absolute center */
     position: absolute;
     display: flex;
     margin: 0 auto;
@@ -73,9 +106,38 @@ body * {
     overflow: hidden;
     transition: 350ms;
 }
+
 .info_toast p {
     position: relative;
-    display: flex;
-    margin: auto auto;
+    margin: auto;
     padding-bottom: 5%;
+    font-weight: bold
+}
+
+.overflow {
+    overflow: hidden;
+}
+
+.flex {
+    display: flex;
+}
+
+.absolute {
+    position: absolute;
+}
+
+.center_absolute {
+    margin-left: auto;
+    margin-right: auto;
+    left: 0;
+    right: 0;
+}
+
+.vertical {
+    margin-top: auto;
+    margin-bottom: auto;
+}
+
+.margin {
+    margin: auto;
 }
