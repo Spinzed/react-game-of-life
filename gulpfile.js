@@ -15,10 +15,10 @@ gulp.task('react', () => {
     .pipe(babel({
       presets: ['env']
     }))
-    .pipe(gulp.dest('interface/'));
+    .pipe(gulp.dest('src/interface/'));
 });
 
 gulp.task('default', () => {
   gulp.start(['react']);
-  watch(["interface/**/*.jsx"], () => gulp.start(['react']));
+  watch(["src/interface/**/*.jsx"], () => gulp.start(['react']));
 });

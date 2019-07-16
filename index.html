@@ -5,31 +5,11 @@
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css?family=Exo+2&display=swap" rel="stylesheet">
     <title>Game of Life</title>
-    <!-- v JS files v -->
-    <script src="libraries/p5.js"></script>
-    <script src="libraries/p5.dom.js"></script>
-    <script src="libraries/p5.sound.js"></script>
-    <!-- ^ p5.js ^ -->
-    <script src="https://unpkg.com/react@16/umd/react.development.js" crossorigin></script>
-    <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js" crossorigin></script>
-    <!-- ^ React.js ^ -->
-    <script src="game.js"></script>
-    <script src="sketch.js"></script>
-    <script src="interface/interface.js"></script>
-    <script src="interface/command-line.js"></script>
-    <script src="interface/new-game-prompt.js"></script>
-    <script src="interface/info-toast.js"></script>
-    <!-- ^ Game logic ^ -->
 </head>
 
 <body>
     <div id="interface"></div>
-    <script>
-        ReactDOM.render(
-            React.createElement(Interface),
-            document.getElementById("interface")
-        )
-    </script>
+    <script src="dist/bundle.js"></script>
 </body>
 
 </html>

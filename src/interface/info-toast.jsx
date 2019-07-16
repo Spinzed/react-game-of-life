@@ -1,4 +1,6 @@
-class InfoToast extends React.Component {
+import React from "react";
+
+export default class InfoToast extends React.Component {
   constructor(props) { // expects render (bool), type (string), message (string) and onClose (handler function)
     super(props);
     this.onTransition = this.onTransition.bind(this);

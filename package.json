@@ -1,15 +1,42 @@
 {
-    "dependencies": {
-        "babel-cli": "6.26.0",
-        "babel-plugin-transform-object-rest-spread": "6.26.0",
-        "babel-preset-env": "1.7.0",
-        "babel-preset-react": "6.24.1",
-        "gulp": "3.9.1",
-        "gulp-babel": "7.0.1",
-        "gulp-plumber": "1.2.0",
-        "gulp-react": "3.1.0",
-        "gulp-watch": "5.0.1",
-        "http-server": "0.11.1",
-        "package.json": "^2.0.1"
-    }
+  "dependencies": {
+    "p5": "^0.9.0",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.5.4",
+    "@babel/preset-env": "^7.5.4",
+    "@babel/preset-react": "^7.0.0",
+    "babel-loader": "^8.0.6",
+    "package.json": "^2.0.1",
+    "react-p5": "^1.0.5",
+    "webpack": "^4.35.3",
+    "webpack-cli": "^3.3.6",
+    "webpack-dev-server": "^3.7.2"
+  },
+  "name": "p5-game-of-life",
+  "description": "Conway's Game of Life remade in JavaScript library React.js among many other utilities",
+  "version": "1.0.0",
+  "main": "game.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"This is a test I guess\" && exit 1",
+    "webpack": "webpack",
+    "start": "npm run build",
+    "build": "webpack -d && webpack-dev-server --content-base src/ --inline --hot",
+    "build:prod": "webpack -p"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Spinzed/p5-game-of-life.git"
+  },
+  "author": "Spinzed",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Spinzed/p5-game-of-life/issues"
+  },
+  "homepage": "https://github.com/Spinzed/p5-game-of-life#readme"
 }

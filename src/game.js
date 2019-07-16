@@ -1,12 +1,14 @@
-class Game {
-  constructor(seed) {
+export default class beep {
+  constructor(ctx, seed) {
+    this.ctx = ctx;
     this.seed = seed;
     this.aliveCells = [];
     this.cellWidth = 20;
     this.isStarted = false;
-    this.grid = createGraphics(window.outerWidth, window.innerHeight);
+    this.grid = this.ctx.createGraphics(window.outerWidth, window.innerHeight);
     this.speed = 200;
     this.isFrozen = false; // this is used to freeze the game when opening a new game prompt
+    this.start();
   }
 
   newGame(newSeed) {
@@ -39,7 +41,7 @@ class Game {
   }
 
   update() {
-    if (!this.isStarted && !game.isFrozen) return;
+    if (!this.isStarted && !this.isFrozen) return;
     let dead = [];
     let revived = [];
 
@@ -76,7 +78,7 @@ class Game {
   }
 
   readyCanvas() {
-    background(100);
+    this.ctx.background(100);
     this.grid.stroke(200);
 
     // VV generate grid
@@ -86,7 +88,7 @@ class Game {
     for (let i = 0; i < window.innerHeight; i += 20) {
       this.grid.line(0, i, window.outerWidth, i);
     }
-    image(this.grid, 0, 0)
+    this.ctx.image(this.grid, 0, 0)
     this.grid.clear();
   }
 
@@ -94,9 +96,9 @@ class Game {
     this.aliveCells.forEach(cell => {
       let x = (cell.x - 1) * this.cellWidth;
       let y = (cell.y + 1) * this.cellWidth;
-      fill(200);
-      noStroke();
-      rect(x, y, this.cellWidth, this.cellWidth);
+      this.ctx.fill(200);
+      this.ctx.noStroke();
+      this.ctx.rect(x, y, this.cellWidth, this.cellWidth);
     });
   };
 
@@ -120,9 +122,9 @@ class Game {
     if (speed != undefined) this.speed = speed;
     clearInterval(this.runtimeInterval);
     this.runtimeInterval = setInterval(() => {
-      if (this.isStarted && !game.isFrozen) {
+      if (this.isStarted && !this.isFrozen) {
         this.readyCanvas();
-        game.update();
+        this.update();
       }
     }, this.speed);
   }
@@ -149,11 +151,11 @@ class Game {
   continue() {
     if (this.isStarted) return; else this.isStarted = true;
     this.readyCanvas();
-    game.update();
+    this.update();
     this.runtimeInterval = setInterval(() => {
-      if (this.isStarted || game.isFrozen) {
+      if (this.isStarted || this.isFrozen) {
         this.readyCanvas();
-        game.update();
+        this.update();
       }
     }, this.speed);
   }

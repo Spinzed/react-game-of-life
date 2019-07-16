@@ -1,4 +1,10 @@
-class Interface extends React.Component {
+import React from "react";
+import CommandLine from './interface/command-line.jsx';
+import InfoToast from './interface/info-toast.jsx';
+import NewGamePrompt from './interface/new-game-prompt.jsx';
+import { Game as game } from './sketch.js';
+
+export default class Interface extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -14,11 +20,13 @@ class Interface extends React.Component {
       if (game.isFrozen) return;
       if (!this.state.commandLine) {
         if (event.key == "Enter" && !event.shiftKey) {
+          console.log("dfs")
           this.showElement("CommandLine");
         }
       } else {
         if (event.key == "Enter" && !event.shiftKey) {
-          this.showElement("CommandLine"); // focus cmnd line if not focused
+          console.log("dfass")
+          this.showElement("CommandLine"); // focus cmd line if not focused
         }
         if (event.key == "Escape" || event.key == "Enter" && event.shiftKey) {
           this.hideElement("CommandLine");
@@ -28,26 +36,26 @@ class Interface extends React.Component {
   }
   showElement(element, props = undefined) { // props to pass down are optional, they dont have to exist
     if (element == "CommandLine") {
-      if (!this.state.commandLine) this.setState({ commandLine: true });
+      this.setState({ commandLine: true });
     } else if (element == "NewGamePrompt") {
       game.isFrozen = true;
-      if (!this.state.newGamePrompt) this.setState({ newGamePrompt: true });
+      this.setState({ newGamePrompt: true });
     } else if (element == "InfoToast") {
       this.infoToastType = props.type;
       this.infoToastMessage = props.message;
-      if (!this.state.infoToast) this.setState({ infoToast: true });
+      this.setState({ infoToast: true });
     } else {
       throw "Invalid element";
     }
   }
   hideElement(element) {
     if (element == "CommandLine") {
-      if (this.state.commandLine) this.setState({ commandLine: false });
+      this.setState({ commandLine: false });
     } else if (element == "NewGamePrompt") {
       game.isFrozen = false;
-      if (this.state.newGamePrompt) this.setState({ newGamePrompt: false });
+      this.setState({ newGamePrompt: false });
     } else if (element == "InfoToast") {
-      if (this.state.infoToast) this.setState({ infoToast: false });
+      this.setState({ infoToast: false });
     } else {
       throw "Invalid element";
     }
@@ -56,8 +64,8 @@ class Interface extends React.Component {
   render() {
     return (
       <div id="components">
-        <CommandLine render={this.state.commandLine} onShowElement={this.showElement} onClose={this.hideElement}/>
-        <NewGamePrompt render={this.state.newGamePrompt} onClose={this.hideElement}/>
+        <CommandLine render={this.state.commandLine} game={game} onShowElement={this.showElement} onClose={this.hideElement}/>
+        <NewGamePrompt render={this.state.newGamePrompt} game={game} onClose={this.hideElement}/>
         <InfoToast render={this.state.infoToast} type={this.infoToastType} message={this.infoToastMessage} onClose={this.hideElement}/>
       </div>
     );

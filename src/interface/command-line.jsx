@@ -1,5 +1,7 @@
-class CommandLine extends React.Component {
-  constructor(props) { // expecting render (bool), onShowElement (handler function) and onClose (handler function)
+import React from "react";
+
+export default class CommandLine extends React.Component {
+  constructor(props) { // expects render (bool), game (Game object), onShowElement (handler function) and onClose (handler function)
     super(props);
     this.state = {
       input_value: "",
@@ -34,25 +36,25 @@ class CommandLine extends React.Component {
           break;
         case "reset":
         case "restart":
-          game.restart();
+          this.props.game.restart();
           break;
         case "stop":
         case "pause":
-          game.stop();
+          this.props.game.stop();
           break;
         case "start":
         case "continue":
-          game.continue();
+          this.props.game.continue();
           break;
         case "seed":
-          this.renderStatus("info", "Seed: " + game.seed);
+          this.renderStatus("info", "Seed: " + this.props.game.seed);
           renderSuccess = false;
           event.target.value = ""
           this.setState({ input_value: event.target.value })
           break;
         case "speed":
           if (args[0] > 0 && args[0] <= 30) {
-            game.updateSpeed(args[0]);
+            this.props.game.updateSpeed(args[0]);
           } else {
             this.renderStatus("error", "New speed value is not valid or doesn't exist, it must be a value between 0 and 30")
             renderSuccess = false;
@@ -84,9 +86,11 @@ class CommandLine extends React.Component {
     }
   }
   shouldComponentUpdate(nextProps, nextState) { // prevent unnecesarry rerenders
+    console.log("yeys")
+    if (this.isShown) this.cmd_line.current.focus(); // focus on every component rerender
     if (this.props != nextProps ||
       this.state.suggestionBox != nextState.suggestionBox ||
-      nextState.suggestionBox) {
+      nextState.suggestionBox) { // this.state and nexState are always False, different object references?
       return true;
     }
     return false;
@@ -95,9 +99,11 @@ class CommandLine extends React.Component {
     if (nextProps.render) {
       this.isShown = true; // indicates if the component is shown
     } else {
+      if (this.height != 0) {
+        this.setState({ suggestionBox: false });
+        this.props.onClose("InfoToast");
+      }
       this.height = 0; // if the component should hide, triggers the animation, when finished, it triggers onTransition handler
-      this.setState({ suggestionBox: false });
-      this.props.onClose("InfoToast");
     }
   }
   componentDidUpdate() {
@@ -136,7 +142,7 @@ class CommandLine extends React.Component {
 class SuggestionBox extends React.Component {
   constructor(props) { // expects render (bool) and search_query (string)
     super(props);
-    fetch("./interface/commands.json").then((response) => {
+    fetch("./src/interface/commands.json").then((response) => {
       return response.json();
     })
     .then((response) => {

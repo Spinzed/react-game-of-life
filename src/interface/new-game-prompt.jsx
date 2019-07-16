@@ -1,5 +1,7 @@
-class NewGamePrompt extends React.Component {
-  constructor(props) { // expects render (bool) and onClose (handler function)
+import React from "react";
+
+export default class NewGamePrompt extends React.Component {
+  constructor(props) { // expects render (bool), game (Game object) and onClose (handler function)
     super(props);
     this.state = ({
       input_value: ""
@@ -23,7 +25,7 @@ class NewGamePrompt extends React.Component {
         console.log("Not a valid number");
         return;
       }
-      game.newGame(seed);
+      this.props.game.newGame(seed);
       this.props.onClose("NewGamePrompt");
       console.log("valid number");
     }
