@@ -12,6 +12,10 @@ let s = (sk) => {
     sk.frameRate(60);
     game = new Game(sk, Math.round(Math.random() * 1000000));
   }
+  sk.draw = () => {
+    game.readyCanvas();
+    game.update();
+  } 
   // VV I'll reimplement this when I figure how, I dont have fucking nerves to do it rn
   // sk.mousePressed = () => {
   //   if (game.isFrozen) return;

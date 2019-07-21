@@ -1,7 +1,8 @@
 import React from "react";
+import Cookie from "js-cookie";
 
 export default class CommandLine extends React.Component {
-  constructor(props) { // expects render (bool), game (Game object), onShowElement (handler function) and onClose (handler function)
+  constructor(props) { // expects render (bool), game (Game object), onShowElement (handler) and onClose (handler)
     super(props);
     this.state = {
       input_value: "",
@@ -26,6 +27,8 @@ export default class CommandLine extends React.Component {
   }
   keyDown(event) { // triggers on key pressed in input field
     if (!event.shiftKey && event.key == "Enter") {
+        console.log(this.height)
+      if (event.target.value == "") return;
       let renderSuccess = true;
       let command = this.parse_input_value().command;
       let args = this.parse_input_value().args;
@@ -40,6 +43,7 @@ export default class CommandLine extends React.Component {
           break;
         case "stop":
         case "pause":
+        case "freeze":
           this.props.game.stop();
           break;
         case "start":
@@ -54,7 +58,7 @@ export default class CommandLine extends React.Component {
           break;
         case "speed":
           if (args[0] > 0 && args[0] <= 30) {
-            this.props.game.updateSpeed(args[0]);
+            this.props.game.updateSpeed(parseInt(args[0]));
           } else {
             this.renderStatus("error", "New speed value is not valid or doesn't exist, it must be a value between 0 and 30")
             renderSuccess = false;
@@ -86,7 +90,6 @@ export default class CommandLine extends React.Component {
     }
   }
   shouldComponentUpdate(nextProps, nextState) { // prevent unnecesarry rerenders
-    console.log("yeys")
     if (this.isShown) this.cmd_line.current.focus(); // focus on every component rerender
     if (this.props != nextProps ||
       this.state.suggestionBox != nextState.suggestionBox ||
@@ -97,6 +100,12 @@ export default class CommandLine extends React.Component {
   }
   componentWillUpdate(nextProps, nextState) { // newProps are updated props, this.props are old ones
     if (nextProps.render) {
+      if (Cookie.get("help_stage") < "3") {
+        setTimeout(() => {
+          this.props.onShowElement("InfoToast", { type: "info", message: "Enter \"help\" to browse through all commands" });
+          Cookie.set("help_stage", "3");
+        }, 1000)
+      }
       this.isShown = true; // indicates if the component is shown
     } else {
       if (this.height != 0) {
@@ -133,7 +142,7 @@ export default class CommandLine extends React.Component {
     } else return null;
   }
   parse_input_value(value = this.state.input_value) {
-    let args = value.toLowerCase().split(" ").filter(arg => arg != ""); // splits the args and removes trailing empty strings
+    let args = value.toLowerCase().trimRight().split(" ").filter(arg => arg != ""); // splits the args and removes trailing empty strings
     let command = args.shift(); // take the first argument of args and put set it as command
     return { command, args };
   }
@@ -146,6 +155,11 @@ class SuggestionBox extends React.Component {
       return response.json();
     })
     .then((response) => {
+      let map = new Map(); // sort the response array
+      response.forEach(command => map.set(command.name, command));
+      let mapSorted = new Map([...map.entries()].sort());
+      let sortedCommands = [];
+      mapSorted.forEach(command => sortedCommands.push(command));
       this.commands = response;
     })
     .catch((response) => {
@@ -153,12 +167,12 @@ class SuggestionBox extends React.Component {
     })
     this.text_colors = {
       written: "#00b7ff",
-      mistaken: "red",
+      mistaken: "#ff7a7a",
       unreached: "#b3b3b3"
     }
   }
   componentWillUpdate(nextProps, nextState) {
-    if (!nextProps.render) return;
+    if (!nextProps.render) return; // prevents stuff from doing if it doesnt have to
     this.suggestions = [];
     this.command = nextProps.search_query.command;
     this.args = nextProps.search_query.args;
@@ -171,11 +185,17 @@ class SuggestionBox extends React.Component {
           unreached: ""
         };
         suggestion.written = this.command;
-        command_obj.args.map((arg, index) => {
+        command_obj.args.map((cmd_obj_arg, index) => {
           if (this.args[index] != undefined) {
-            suggestion.written += " " + arg;
+            let parsed_arg = parseInt(this.args[index]);
+            if (isNaN(parsed_arg)) parsed_arg = this.args[index];
+            if (typeof(parsed_arg) == this.getArgType(cmd_obj_arg)) {
+              suggestion.written += " " + cmd_obj_arg;
+            } else {
+              suggestion.mistaken += " " + cmd_obj_arg;
+            }
           } else {
-            suggestion.unreached += " " + arg;
+            suggestion.unreached += " " + cmd_obj_arg;
           }
         })
         this.suggestions.push(suggestion);
@@ -215,6 +235,18 @@ class SuggestionBox extends React.Component {
         </div>
       )
     } else return null;
+  }
+
+  getArgType(arg) {
+    let start = arg[0];
+    let end = arg[arg.length - 1]
+    if (start == "<" && end == ">") {
+      return "number";
+    } else if (start == "[" && end == "]") {
+      return "string";
+    } else {
+      throw "Error: unknown argument type"
+    }
   }
 }
 

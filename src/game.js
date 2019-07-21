@@ -1,4 +1,4 @@
-export default class beep {
+export default class Game {
   constructor(ctx, seed) {
     this.ctx = ctx;
     this.seed = seed;
@@ -6,7 +6,7 @@ export default class beep {
     this.cellWidth = 20;
     this.isStarted = false;
     this.grid = this.ctx.createGraphics(window.outerWidth, window.innerHeight);
-    this.speed = 200;
+    this.speed = 5;
     this.isFrozen = false; // this is used to freeze the game when opening a new game prompt
     this.start();
   }
@@ -17,15 +17,16 @@ export default class beep {
   }
 
   start() {
+    this.ctx.loop();
     this.aliveCells = [];
     this.readyCanvas();
-    this.setRefreshInterval();
+    this.ctx.frameRate(this.speed);
     for (let i = 0; i < 300; i++) {
       let randx = Math.round(this.rand(this.seed + 100 + i) * 30);
       let randy = Math.round(this.rand(this.seed + i) * 30);
       let x = this.getX((window.outerWidth - 600) / 2) + randx;
       let y = this.getY((window.innerHeight - 700) / 2) + randy;
-      let cell = new Cell(x, y);
+      let cell = { x: x, y: y };
       this.aliveCells.push(cell);
     }
 
@@ -49,7 +50,7 @@ export default class beep {
     this.aliveCells.forEach(aliveCell => {
       for (let x = aliveCell.x - 1; x < aliveCell.x + 2; x++) {
         for (let y = aliveCell.y - 1; y < aliveCell.y + 2; y++) {
-          let cell = new Cell(x, y);
+          let cell = { x: x, y: y };
           if (this.getBoyzInDaHood(cell) == 3 && !this.isAlive(cell) && !this.isInList(cell, revived)) {
             revived.push(cell);
           }
@@ -78,6 +79,7 @@ export default class beep {
   }
 
   readyCanvas() {
+    if (!this.isStarted) return;
     this.ctx.background(100);
     this.grid.stroke(200);
 
@@ -118,19 +120,9 @@ export default class beep {
     return count;
   }
 
-  setRefreshInterval(speed) {
-    if (speed != undefined) this.speed = speed;
-    clearInterval(this.runtimeInterval);
-    this.runtimeInterval = setInterval(() => {
-      if (this.isStarted && !this.isFrozen) {
-        this.readyCanvas();
-        this.update();
-      }
-    }, this.speed);
-  }
-
   updateSpeed(newSpeed) {
-    this.setRefreshInterval(1000 / newSpeed);
+    this.speed = newSpeed;
+    this.ctx.frameRate(newSpeed);
   }
 
   getX(coord) { // transfer pixels to grid row
@@ -144,22 +136,19 @@ export default class beep {
   }
 
   stop() { // oh my what could this possibly do??
-    if (!this.isStarted) return; else this.isStarted = false;
-    clearInterval(this.runtimeInterval);
+    if (!this.isStarted) return; else {
+      this.isStarted = false;
+      this.ctx.noLoop();
+    }
   }
 
   continue() {
-    if (this.isStarted) return; else this.isStarted = true;
-    this.readyCanvas();
-    this.update();
-    this.runtimeInterval = setInterval(() => {
-      if (this.isStarted || this.isFrozen) {
-        this.readyCanvas();
-        this.update();
-      }
-    }, this.speed);
+    if (this.isStarted) return; else {
+      this.isStarted = true;
+      this.ctx.loop();
+    }
   }
-
+  
   togglePause() {
     if (this.isStarted) this.stop(); else this.continue();
   }
@@ -192,16 +181,5 @@ export default class beep {
   rand(seed) {
     var x = Math.sin(seed) * 1000000;
     return x - Math.floor(x);
-  }
-}
-
-class Cell {
-  constructor(x, y) {
-    this.x = x;
-    this.y = y;
-  }
-
-  coords() {
-    return [this.x, this.y];
   }
 }

@@ -1,4 +1,5 @@
 import React from "react";
+import Cookie from "js-cookie";
 import CommandLine from './interface/command-line.jsx';
 import InfoToast from './interface/info-toast.jsx';
 import NewGamePrompt from './interface/new-game-prompt.jsx';
@@ -14,18 +15,24 @@ export default class Interface extends React.Component {
     }
     this.showElement = this.showElement.bind(this);
     this.hideElement = this.hideElement.bind(this);
+    if (Cookie.get("help_stage") == undefined) {
+      setTimeout(() => {
+        this.showElement("InfoToast", { type: "info", message: "Press Enter to show the Command Line" });
+        Cookie.set("help_stage", "1");
+      }, 3000)
+    }    
   }
   componentDidMount() {
     document.addEventListener("keydown", () => {
+      if (game == undefined) return; // this prevents errors if Enter is pressed before all js is loaded
       if (game.isFrozen) return;
       if (!this.state.commandLine) {
         if (event.key == "Enter" && !event.shiftKey) {
-          console.log("dfs")
+          if (Cookie.get("help_stage") == "1") Cookie.set("help_stage", "2");
           this.showElement("CommandLine");
         }
       } else {
         if (event.key == "Enter" && !event.shiftKey) {
-          console.log("dfass")
           this.showElement("CommandLine"); // focus cmd line if not focused
         }
         if (event.key == "Escape" || event.key == "Enter" && event.shiftKey) {

@@ -20,6 +20,10 @@
         "args": []
     },
     {
+        "name": "freeze",
+        "args": []
+    },
+    {
         "name": "start",
         "args": []
     },
@@ -36,5 +40,9 @@
         "args": [
             "<speed>"
         ]
+    },
+    {
+        "name": "help",
+        "args": []
     }
 ]
