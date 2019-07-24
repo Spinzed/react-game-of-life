@@ -1,12 +1,12 @@
 export default class Game {
-  constructor(ctx, seed) {
-    this.ctx = ctx;
+  constructor(canvas, seed) {
+    this.canvas = document.getElementById(canvas);
+    this.canvas_ctx = this.canvas.getContext("2d");
     this.seed = seed;
     this.aliveCells = [];
-    this.cellWidth = 20;
+    this.cellWidth = 5;
     this.isStarted = false;
-    this.grid = this.ctx.createGraphics(window.outerWidth, window.innerHeight);
-    this.speed = 5;
+    this.speed = 10;
     this.isFrozen = false; // this is used to freeze the game when opening a new game prompt
     this.start();
   }
@@ -17,24 +17,28 @@ export default class Game {
   }
 
   start() {
-    this.ctx.loop();
+    this.startTimeout();
     this.aliveCells = [];
     this.readyCanvas();
-    this.ctx.frameRate(this.speed);
+    this.setSpeed(this.speed);
+
+    this.pixelRange = 30;
+    let canvasW = parseInt(this.canvas.getAttribute("width"));
+    let canvasH = parseInt(this.canvas.getAttribute("height"));
     for (let i = 0; i < 300; i++) {
-      let randx = Math.round(this.rand(this.seed + 100 + i) * 30);
-      let randy = Math.round(this.rand(this.seed + i) * 30);
-      let x = this.getX((window.outerWidth - 600) / 2) + randx;
-      let y = this.getY((window.innerHeight - 700) / 2) + randy;
+      let randX = Math.floor(this.rand(this.seed + i) * this.pixelRange);
+      let randY = Math.floor(this.rand(this.seed + 100 + i) * this.pixelRange);
+      let x = this.getX(canvasW / 2) + randX - (this.pixelRange / 2);
+      let y = this.getY(canvasH / 2) + randY - (this.pixelRange / 2);
       let cell = { x: x, y: y };
       this.aliveCells.push(cell);
     }
 
     // HARDCODED FOR TESTING
-    // let cell = new Cell(40, 20);
+    // let cell = { x: 1, y: 1 };
     // let cell2 = new Cell(40, 21);
     // let cell3 = new Cell(40, 22);
-    // this.aliveCells.push(cell, cell2, cell3);
+    // this.aliveCells.push(cell);
     // HARDCODED FOR TESTING
 
     this.drawCells();
@@ -80,27 +84,32 @@ export default class Game {
 
   readyCanvas() {
     if (!this.isStarted) return;
-    this.ctx.background(100);
-    this.grid.stroke(200);
+    this.canvas_ctx.fillStyle = '#969696';
+    this.canvas_ctx.fillRect(0, 0, this.canvas.clientWidth, this.canvas.clientHeight);
 
     // VV generate grid
-    for (let i = 0; i < window.outerWidth; i += 20) {
-      this.grid.line(i, 0, i, window.innerHeight);
+    this.canvas_ctx.fillStyle = '#646464';
+    for (let i = 0; i < this.canvas.clientWidth; i += this.cellWidth + 1) {
+      this.canvas_ctx.fillRect(i, 0, 1, this.canvas.clientHeight); // didnt use lines cuz of reasons
     }
-    for (let i = 0; i < window.innerHeight; i += 20) {
-      this.grid.line(0, i, window.outerWidth, i);
+
+    for (let i = 0; i < this.canvas.clientHeight; i += this.cellWidth + 1) {
+      this.canvas_ctx.fillRect(0, i, this.canvas.clientWidth, 1); // didnt use lines cuz of reasons
     }
-    this.ctx.image(this.grid, 0, 0)
-    this.grid.clear();
+
+    // VV old way of genrating the grid, very slow
+    // this.canvas_ctx.fillStyle = '#969696';
+    // for (let w = 0; w < this.canvas.clientWidth; w += 6) {
+    //   for (let h = 0; h < this.canvas.clientHeight; h += 6) {
+    //     this.canvas_ctx.fillRect(w + 1, h + 1, 5, 5);
+    //   }
+    // }
   }
 
   drawCells() {
+    this.canvas_ctx.fillStyle = '#272727';
     this.aliveCells.forEach(cell => {
-      let x = (cell.x - 1) * this.cellWidth;
-      let y = (cell.y + 1) * this.cellWidth;
-      this.ctx.fill(200);
-      this.ctx.noStroke();
-      this.ctx.rect(x, y, this.cellWidth, this.cellWidth);
+      this.canvas_ctx.fillRect(cell.x * (this.cellWidth + 1) + 1, cell.y * (this.cellWidth + 1) + 1, 5, 5);
     });
   };
 
@@ -120,32 +129,43 @@ export default class Game {
     return count;
   }
 
-  updateSpeed(newSpeed) {
+  setSpeed(newSpeed) {
     this.speed = newSpeed;
-    this.ctx.frameRate(newSpeed);
+    this.startTimeout();
+  }
+
+  startTimeout() {
+    clearInterval(this.speedLoop);
+    let speed = 1000 / this.speed;
+    this.speedLoop = setInterval(() => {
+      this.readyCanvas();
+      this.update();
+    }, speed);
+  }
+
+  stopTimeout() {
+    clearInterval(this.speedLoop);
   }
 
   getX(coord) { // transfer pixels to grid row
-    let filter = coord - (coord % this.cellWidth);
-    return filter / this.cellWidth + 1;
+    return Math.floor(coord / (this.cellWidth + 1)) + 1;
   }
 
   getY(coord) { // transfer pixels to grid column
-    let filter = coord - (coord % this.cellWidth);
-    return filter / this.cellWidth + 1;
+    return Math.floor(coord / (this.cellWidth + 1)) + 1;
   }
 
   stop() { // oh my what could this possibly do??
     if (!this.isStarted) return; else {
       this.isStarted = false;
-      this.ctx.noLoop();
+      this.stopTimeout();
     }
   }
 
   continue() {
     if (this.isStarted) return; else {
       this.isStarted = true;
-      this.ctx.loop();
+      this.startTimeout();
     }
   }
   

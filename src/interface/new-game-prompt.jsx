@@ -20,7 +20,7 @@ export default class NewGamePrompt extends React.Component {
         this.props.onClose("NewGamePrompt");
         return;
       }
-      let seed = int(this.state.input_value);
+      let seed = parseInt(this.state.input_value);
       if (isNaN(seed) || seed == Infinity) {
         console.log("Not a valid number");
         return;

@@ -27,7 +27,6 @@ export default class CommandLine extends React.Component {
   }
   keyDown(event) { // triggers on key pressed in input field
     if (!event.shiftKey && event.key == "Enter") {
-        console.log(this.height)
       if (event.target.value == "") return;
       let renderSuccess = true;
       let command = this.parse_input_value().command;
@@ -57,10 +56,10 @@ export default class CommandLine extends React.Component {
           this.setState({ input_value: event.target.value })
           break;
         case "speed":
-          if (args[0] > 0 && args[0] <= 30) {
-            this.props.game.updateSpeed(parseInt(args[0]));
+          if (args[0] > 0 && args[0] <= 50) {
+            this.props.game.setSpeed(parseInt(args[0]));
           } else {
-            this.renderStatus("error", "New speed value is not valid or doesn't exist, it must be a value between 0 and 30")
+            this.renderStatus("error", "New speed value is not valid or doesn't exist, it must be a value between 0 and 50")
             renderSuccess = false;
           }
           break;
@@ -178,37 +177,39 @@ class SuggestionBox extends React.Component {
     this.args = nextProps.search_query.args;
 
     this.commands.map((command_obj, index) => {
-      if (this.command == command_obj.name) {
-        let suggestion = {
-          written: "",
-          mistaken: "",
-          unreached: ""
-        };
-        suggestion.written = this.command;
-        command_obj.args.map((cmd_obj_arg, index) => {
-          if (this.args[index] != undefined) {
-            let parsed_arg = parseInt(this.args[index]);
-            if (isNaN(parsed_arg)) parsed_arg = this.args[index];
-            if (typeof(parsed_arg) == this.getArgType(cmd_obj_arg)) {
-              suggestion.written += " " + cmd_obj_arg;
+      command_obj.aliases.forEach(alias => {
+        if (this.command == alias) {
+          let suggestion = {
+            written: "",
+            mistaken: "",
+            unreached: ""
+          };
+          suggestion.written = this.command;
+          command_obj.args.map((cmd_obj_arg, index) => {
+            if (this.args[index] != undefined) {
+              let parsed_arg = parseInt(this.args[index]);
+              if (isNaN(parsed_arg)) parsed_arg = this.args[index];
+              if (typeof(parsed_arg) == this.getArgType(cmd_obj_arg)) {
+                suggestion.written += " " + cmd_obj_arg;
+              } else {
+                suggestion.mistaken += " " + cmd_obj_arg;
+              }
             } else {
-              suggestion.mistaken += " " + cmd_obj_arg;
+              suggestion.unreached += " " + cmd_obj_arg;
             }
-          } else {
-            suggestion.unreached += " " + cmd_obj_arg;
-          }
-        })
-        this.suggestions.push(suggestion);
-      } else if (this.command == command_obj.name.slice(0, this.command.length)) {
-        let suggestion = {
-          written: "",
-          mistaken: "",
-          unreached: ""
-        };
-        suggestion.written = this.command;
-        suggestion.unreached = command_obj.name.slice(this.command.length, command_obj.name.length)
-        this.suggestions.push(suggestion);
-      }
+          })
+          this.suggestions.push(suggestion);
+        } else if (this.command == alias.slice(0, this.command.length)) {
+          let suggestion = {
+            written: "",
+            mistaken: "",
+            unreached: ""
+          };
+          suggestion.written = this.command;
+          suggestion.unreached = alias.slice(this.command.length, alias.length)
+          this.suggestions.push(suggestion);
+        }
+      });
     });
   }
   render() {
@@ -224,9 +225,14 @@ class SuggestionBox extends React.Component {
               this.suggestions.map((suggestion, index) => (
                 <li key={index}>
                   <div className="margin">
-                    <span style={{ color: this.text_colors.written }}>{suggestion.written}</span>
-                    <span style={{ color: this.text_colors.mistaken }}>{suggestion.mistaken}</span>
-                    <span style={{ color: this.text_colors.unreached }}>{suggestion.unreached}</span>
+                    <div>
+                      <span style={{ color: this.text_colors.written }}>{suggestion.written}</span>
+                      <span style={{ color: this.text_colors.mistaken }}>{suggestion.mistaken}</span>
+                      <span style={{ color: this.text_colors.unreached }}>{suggestion.unreached}</span>
+                    </div>
+                    <div>
+                      <span></span>
+                    </div>
                   </div>
                 </li>
               ))

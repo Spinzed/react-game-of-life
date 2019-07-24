@@ -1,18 +1,15 @@
 body {
     margin: 0;
+    background-color: #535151;
+    overflow: hidden;
 }
 
 body * {
     font-family: "Exo 2", arial !important;
 }
 
-.p5-canvas {
-    position: fixed;
-    top: 0;
-    left: 0;
-    margin: 0;
-    padding: 0;
-    z-index: -1;
+canvas {
+    margin-top: 10em;
 }
 
 .cmd_line {
@@ -25,7 +22,7 @@ body * {
 
 .cmd_line,
 .cmd_line_outer {
-    transition: 500ms;
+    transition: 400ms;
 }
 
 .cmd_status {
@@ -112,7 +109,7 @@ body * {
     text-align: center;
     box-sizing: border-box;
     overflow: hidden;
-    transition: 350ms;
+    transition: 250ms;
 }
 
 .info_toast p {
@@ -148,4 +145,7 @@ body * {
 
 .margin {
     margin: auto;
+}
+.center_content {
+    text-align: center;
 }

@@ -1,48 +1,39 @@
 [
     {
-        "name": "new",
-        "args": []
+        "aliases": ["new"],
+        "args": [],
+        "description": "Make a new game with specified seed"
     },
     {
-        "name": "reset",
-        "args": []
+        "aliases": ["reset", "restart"],
+        "args": [],
+        "description": "Restart current game"
     },
     {
-        "name": "restart",
-        "args": []
+        "aliases": ["stop", "pause", "freeze"],
+        "args": [],
+        "description": "Freeze the current game state"
     },
     {
-        "name": "stop",
-        "args": []
+        "aliases": ["start", "continue"],
+        "args": [],
+        "description": "Continue the game"
     },
     {
-        "name": "pause",
-        "args": []
+        "aliases": ["seed"],
+        "args": [],
+        "description": "Get the seed of the current game"
     },
     {
-        "name": "freeze",
-        "args": []
-    },
-    {
-        "name": "start",
-        "args": []
-    },
-    {
-        "name": "continue",
-        "args": []
-    },
-    {
-        "name": "seed",
-        "args": []
-    },
-    {
-        "name": "speed",
+        "aliases": ["speed"],
         "args": [
             "<speed>"
-        ]
+        ],
+        "description": "Set the speed"
     },
     {
-        "name": "help",
-        "args": []
+        "aliases": ["help"],
+        "args": [],
+        "description": "Show Help menu"
     }
 ]
