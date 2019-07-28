@@ -19,15 +19,15 @@ export default class CommandLine extends React.Component {
     this.setState({ input_value: event.target.value });
     this.props.onClose("InfoToast");
 
-    if (event.target.value != "") { // make sure not to use the value from state
+    if (event.target.value !== "") { // make sure not to use the value from state
       this.setState({ suggestionBox: true });
     } else {
       this.setState({ suggestionBox: false });
     }
   }
   keyDown(event) { // triggers on key pressed in input field
-    if (!event.shiftKey && event.key == "Enter") {
-      if (event.target.value == "") return;
+    if (!event.shiftKey && event.key === "Enter") {
+      if (event.target.value === "") return;
       let renderSuccess = true;
       let command = this.parse_input_value().command;
       let args = this.parse_input_value().args;
@@ -72,7 +72,7 @@ export default class CommandLine extends React.Component {
         this.setState({ input_value : event.target.value })
         this.renderStatus("info", "Command successfully executed: " + command);
       }
-      if (event.target.value != "") { // make sure not to use the value from state
+      if (event.target.value !== "") { // make sure not to use the value from state
         this.setState({ suggestionBox: true });
       } else {
         this.setState({ suggestionBox: false });
@@ -83,15 +83,15 @@ export default class CommandLine extends React.Component {
     this.props.onShowElement("InfoToast", {type: type, message: message});
   }
   onTransition() {
-    if (this.height == 0) { // just hides the component when css animation finishes
+    if (this.height === 0) { // just hides the component when css animation finishes
       this.isShown = false;
       this.forceUpdate();
     }
   }
   shouldComponentUpdate(nextProps, nextState) { // prevent unnecesarry rerenders
     if (this.isShown) this.cmd_line.current.focus(); // focus on every component rerender
-    if (this.props != nextProps ||
-      this.state.suggestionBox != nextState.suggestionBox ||
+    if (this.props !== nextProps ||
+      this.state.suggestionBox !== nextState.suggestionBox ||
       nextState.suggestionBox) { // this.state and nexState are always False, different object references?
       return true;
     }
@@ -107,7 +107,7 @@ export default class CommandLine extends React.Component {
       }
       this.isShown = true; // indicates if the component is shown
     } else {
-      if (this.height != 0) {
+      if (this.height !== 0) {
         this.setState({ suggestionBox: false });
         this.props.onClose("InfoToast");
       }
@@ -120,7 +120,7 @@ export default class CommandLine extends React.Component {
       this.cmd_line.current.focus(); // had to use this instead of autofocus cuz it wouldnt focus it when the component is already shown
     }
     if (this.props.render) {
-      if (this.height == 0) { // ..but it shouldnt work without timeout?..
+      if (this.height === 0) { // ..but it shouldnt work without timeout?..
         this.height = 120;
         this.forceUpdate();
       }
@@ -128,12 +128,12 @@ export default class CommandLine extends React.Component {
   }
   render() {
     let outer_height = this.height - 45;
-    outer_height < 0 ? outer_height = 0 : null;
+    if (outer_height < 0) outer_height = 0;
     if (this.isShown) {
       return (
         <div id="search_container" className="cmd_line center_absolute" style={{ height: this.height + "px"}} onTransitionEnd={this.onTransition}>
           <div id="cmd_line_outer" className="cmd_line_outer overflow" style={{ height: outer_height + "px" }}>
-            <input type="text" id="cmd_line" className="input_standard" ref={this.cmd_line} style={{ margin: "35px 0 0 0" }} onChange={this.onValueChange} onKeyDown={this.keyDown} wrap="off" autoCorrect="off" autoCapitalize="off" spellCheck="false" autoComplete="off" placeholder="Enter command here.." />
+            <input type="text" id="cmd_line" className="input_standard dark" ref={this.cmd_line} style={{ margin: "35px 0 0 0" }} onChange={this.onValueChange} onKeyDown={this.keyDown} wrap="off" autoCorrect="off" autoCapitalize="off" spellCheck="false" autoComplete="off" placeholder="Enter command here.." />
           </div>
           <SuggestionBox render={this.state.suggestionBox} search_query={this.parse_input_value()}/>
         </div>
@@ -141,7 +141,7 @@ export default class CommandLine extends React.Component {
     } else return null;
   }
   parse_input_value(value = this.state.input_value) {
-    let args = value.toLowerCase().trimRight().split(" ").filter(arg => arg != ""); // splits the args and removes trailing empty strings
+    let args = value.toLowerCase().trimRight().split(" ").filter(arg => arg !== ""); // splits the args and removes trailing empty strings
     let command = args.shift(); // take the first argument of args and put set it as command
     return { command, args };
   }
@@ -150,7 +150,9 @@ export default class CommandLine extends React.Component {
 class SuggestionBox extends React.Component {
   constructor(props) { // expects render (bool) and search_query (string)
     super(props);
-    fetch("./src/interface/commands.json").then((response) => {
+    fetch("./src/interface/commands.json")
+    .then((response) => {
+      console.log(response)
       return response.json();
     })
     .then((response) => {
@@ -176,9 +178,9 @@ class SuggestionBox extends React.Component {
     this.command = nextProps.search_query.command;
     this.args = nextProps.search_query.args;
 
-    this.commands.map((command_obj, index) => {
+    this.commands.map(command_obj => {
       command_obj.aliases.forEach(alias => {
-        if (this.command == alias) {
+        if (this.command === alias) {
           let suggestion = {
             written: "",
             mistaken: "",
@@ -186,10 +188,10 @@ class SuggestionBox extends React.Component {
           };
           suggestion.written = this.command;
           command_obj.args.map((cmd_obj_arg, index) => {
-            if (this.args[index] != undefined) {
+            if (this.args[index] !== undefined) {
               let parsed_arg = parseInt(this.args[index]);
               if (isNaN(parsed_arg)) parsed_arg = this.args[index];
-              if (typeof(parsed_arg) == this.getArgType(cmd_obj_arg)) {
+              if (typeof(parsed_arg) === this.getArgType(cmd_obj_arg)) {
                 suggestion.written += " " + cmd_obj_arg;
               } else {
                 suggestion.mistaken += " " + cmd_obj_arg;
@@ -197,9 +199,10 @@ class SuggestionBox extends React.Component {
             } else {
               suggestion.unreached += " " + cmd_obj_arg;
             }
+            return cmd_obj_arg;
           })
           this.suggestions.push(suggestion);
-        } else if (this.command == alias.slice(0, this.command.length)) {
+        } else if (this.command === alias.slice(0, this.command.length)) {
           let suggestion = {
             written: "",
             mistaken: "",
@@ -210,10 +213,11 @@ class SuggestionBox extends React.Component {
           this.suggestions.push(suggestion);
         }
       });
+      return command_obj; //eslint
     });
   }
   render() {
-    // if (this.command == "stop") { // this is a test, will get removed and used in CommandLine component
+    // if (this.command === "stop") { // this is a test, will get removed and used in CommandLine component
     //   let func = new Function(this.commands[0].command); // I could've used eval() too
     //   func();
     // } 
@@ -246,23 +250,24 @@ class SuggestionBox extends React.Component {
   getArgType(arg) {
     let start = arg[0];
     let end = arg[arg.length - 1]
-    if (start == "<" && end == ">") {
+    if (start === "<" && end === ">") {
       return "number";
-    } else if (start == "[" && end == "]") {
+    } else if (start === "[" && end === "]") {
       return "string";
     } else {
-      throw "Error: unknown argument type"
+      throw new Error("Error: unknown argument type");
     }
   }
 }
 
+// eslint-disable-next-line no-unused-vars
 class CommandLineStatus extends React.Component { // old unused component, kept for just in case
   constructor(props) { // expects render (bool), status (string) and message (string)
     super(props);
     this.opacity = "0";
   }
   render() {
-    if (this.props.render && this.opacity == "0") {
+    if (this.props.render && this.opacity === "0") {
       setTimeout(() => {
         this.opacity = "1";
         this.forceUpdate();
@@ -271,7 +276,7 @@ class CommandLineStatus extends React.Component { // old unused component, kept 
       this.opacity = "0";
     }
     if (this.props.render) {
-      this.props.status == "error" ? this.color = "#d13c3c" : this.color = "#1933b7";
+      this.props.status === "error" ? this.color = "#d13c3c" : this.color = "#1933b7";
       return (
         <div id="error" className="cmd_status" style={{ opacity: this.opacity, color: this.color }}>{( this.props.message )}</div>
       )

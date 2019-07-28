@@ -1,33 +1,37 @@
 {
+  "name": "react-game-of-life",
+  "description": "Conway's Game of Life remade in JavaScript library React.js among many other utilities",
+  "version": "0.0.1",
+  "main": "app.js",
   "dependencies": {
     "js-cookie": "^2.2.0",
     "react": "^16.8.6",
-    "react-dom": "^16.8.6"
-  },
-  "devDependencies": {
-    "@babel/core": "^7.5.4",
-    "@babel/preset-env": "^7.5.4",
-    "@babel/preset-react": "^7.0.0",
-    "babel-loader": "^8.0.6",
-    "package.json": "^2.0.1",
-    "react-p5": "^1.0.5",
-    "webpack": "^4.35.3",
-    "webpack-cli": "^3.3.6",
-    "webpack-dev-server": "^3.7.2"
-  },
-  "name": "p5-game-of-life",
-  "description": "Conway's Game of Life remade in JavaScript library React.js among many other utilities",
-  "version": "1.0.0",
-  "main": "game.js",
-  "directories": {
-    "test": "test"
+    "react-dom": "^16.8.6",
+    "react-scripts": "3.0.1"
   },
   "scripts": {
-    "test": "echo \"This is a test I guess\" && exit 1",
-    "webpack": "webpack",
-    "start": "npm run build",
-    "build": "webpack -d && webpack-dev-server --content-base src/ --inline --hot",
-    "build:prod": "webpack -p"
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "directories": {
+    "test": "test"
   },
   "repository": {
     "type": "git",

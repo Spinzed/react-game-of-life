@@ -5,9 +5,13 @@ export default class InfoToast extends React.Component {
     super(props);
     this.onTransition = this.onTransition.bind(this);
     this.height = 0;
+    this.colors = {
+      info: "#1933b7",
+      error: "#6f0505"
+    }
   }
   onTransition() {
-    if (this.height == 0) {
+    if (this.height === 0) {
       this.isShown = false;
       this.isRetracting = false;
       this.forceUpdate();
@@ -24,20 +28,21 @@ export default class InfoToast extends React.Component {
       }
     } else {
       this.height = 0;
-      this.isShown ? this.isRetracting = true : null;
+      if (this.isShown) this.isRetracting = true;
     }
-    newProps.type == "error" ? this.color = "#9e2525" : this.color = "#1933b7";
+    newProps.type === "error" ? this.currentColor = this.colors.error :
+      this.currentColor = this.colors.info;
   }
   componentDidUpdate() { // all the  stuff that doesnt need to be in render
     if (this.props.render) {
-      if (this.height == 0) {
+      if (this.height === 0) {
         setTimeout(() => {
           this.height = 100;
           this.forceUpdate();
         }, 0)
       }
     }
-    if (this.props.type == "info") {
+    if (this.props.type === "info") {
       this.statusRemoveTimeout = setTimeout(() => {
         this.props.onClose("InfoToast");
       }, 5000)
@@ -48,7 +53,7 @@ export default class InfoToast extends React.Component {
     this.isRetracting ? currentProps = this.oldProps : currentProps = this.props;
     if (this.isShown) {
       return (
-        <div id="info_toast" className="info_toast" style={{ color: this.color, height: this.height + "px" }} onTransitionEnd={this.onTransition}>
+        <div id="info_toast" className="info_toast" style={{ color: this.currentColor, height: this.height + "px" }} onTransitionEnd={this.onTransition}>
           <p>{currentProps.message}</p>
         </div>
       )

@@ -14,14 +14,14 @@ export default class NewGamePrompt extends React.Component {
       input_value: event.target.value
     })
   }
-  keyDown() {
-    if (event.key == "Enter" && !event.shiftKey) {
-      if (this.state.input_value == "") {
+  keyDown(event) {
+    if (event.key === "Enter" && !event.shiftKey) {
+      if (this.state.input_value === "") {
         this.props.onClose("NewGamePrompt");
         return;
       }
       let seed = parseInt(this.state.input_value);
-      if (isNaN(seed) || seed == Infinity) {
+      if (isNaN(seed) || seed === Infinity) {
         console.log("Not a valid number");
         return;
       }
@@ -29,7 +29,7 @@ export default class NewGamePrompt extends React.Component {
       this.props.onClose("NewGamePrompt");
       console.log("valid number");
     }
-    if (event.key == "Escape") {
+    if (event.key === "Escape") {
       this.props.onClose(); // this doesnt seem right, will test it out later
     }
   }

@@ -1,6 +1,6 @@
 body {
     margin: 0;
-    background-color: #535151;
+    background-color: #3c3e41;
     overflow: hidden;
 }
 
@@ -15,7 +15,7 @@ canvas {
 .cmd_line {
     position: absolute;
     width: 500px;
-    background-color: #a3a3a3;
+    background-color: #636b6f;
     border-radius: 0px 0px 18px 18px;
     text-align: center;
 }
@@ -64,7 +64,7 @@ canvas {
     position: relative;
     width: 300px;
     height: 40px;
-    background-color: #dddddd;
+    background-color: #a7b0b9;
     border: none;
     border-radius: 5px;
     text-indent: 10px;
@@ -103,7 +103,7 @@ canvas {
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: #999999;
+    background-color: #777777;
     color: #0f0f3a;
     border-radius: 12px 12px 0 0;
     text-align: center;

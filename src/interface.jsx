@@ -3,7 +3,7 @@ import Cookie from "js-cookie";
 import CommandLine from './interface/command-line.jsx';
 import InfoToast from './interface/info-toast.jsx';
 import NewGamePrompt from './interface/new-game-prompt.jsx';
-import { Game as game } from './app.js';
+import { Game as game } from './game.js';
 
 export default class Interface extends React.Component {
   constructor(props) {
@@ -15,7 +15,7 @@ export default class Interface extends React.Component {
     }
     this.showElement = this.showElement.bind(this);
     this.hideElement = this.hideElement.bind(this);
-    if (Cookie.get("help_stage") == undefined) {
+    if (Cookie.get("help_stage") === undefined) {
       setTimeout(() => {
         this.showElement("InfoToast", { type: "info", message: "Press Enter to show the Command Line" });
         Cookie.set("help_stage", "1");
@@ -23,48 +23,49 @@ export default class Interface extends React.Component {
     }    
   }
   componentDidMount() {
-    document.addEventListener("keydown", () => {
-      if (game == undefined) return; // this prevents errors if Enter is pressed before all js is loaded
+    game.start();
+    document.addEventListener("keydown", (event) => {
+      if (game === undefined) return; // this prevents errors if Enter is pressed before all js is loaded
       if (game.isFrozen) return;
       if (!this.state.commandLine) {
-        if (event.key == "Enter" && !event.shiftKey) {
-          if (Cookie.get("help_stage") == "1") Cookie.set("help_stage", "2");
+        if (event.key === "Enter" && !event.shiftKey) {
+          if (Cookie.get("help_stage") === "1") Cookie.set("help_stage", "2");
           this.showElement("CommandLine");
         }
       } else {
-        if (event.key == "Enter" && !event.shiftKey) {
+        if (event.key === "Enter" && !event.shiftKey) {
           this.showElement("CommandLine"); // focus cmd line if not focused
         }
-        if (event.key == "Escape" || event.key == "Enter" && event.shiftKey) {
+        if (event.key === "Escape" || (event.key === "Enter" && event.shiftKey)) {
           this.hideElement("CommandLine");
         }
       }
     });
   }
   showElement(element, props = undefined) { // props to pass down are optional, they dont have to exist
-    if (element == "CommandLine") {
+    if (element === "CommandLine") {
       this.setState({ commandLine: true });
-    } else if (element == "NewGamePrompt") {
+    } else if (element === "NewGamePrompt") {
       game.isFrozen = true;
       this.setState({ newGamePrompt: true });
-    } else if (element == "InfoToast") {
+    } else if (element === "InfoToast") {
       this.infoToastType = props.type;
       this.infoToastMessage = props.message;
       this.setState({ infoToast: true });
     } else {
-      throw "Invalid element";
+      throw new Error("Invalid element");
     }
   }
   hideElement(element) {
-    if (element == "CommandLine") {
+    if (element === "CommandLine") {
       this.setState({ commandLine: false });
-    } else if (element == "NewGamePrompt") {
+    } else if (element === "NewGamePrompt") {
       game.isFrozen = false;
       this.setState({ newGamePrompt: false });
-    } else if (element == "InfoToast") {
+    } else if (element === "InfoToast") {
       this.setState({ infoToast: false });
     } else {
-      throw "Invalid element";
+      throw new Error("Invalid element");
     }
   }
   
