@@ -150,9 +150,9 @@ export default class CommandLine extends React.Component {
 class SuggestionBox extends React.Component {
   constructor(props) { // expects render (bool) and search_query (string)
     super(props);
-    fetch("./src/interface/commands.json")
+    fetch("/static/assets/commands.json")
     .then((response) => {
-      console.log(response)
+      if (response.ok === false) Promise.reject();
       return response.json();
     })
     .then((response) => {
@@ -164,13 +164,17 @@ class SuggestionBox extends React.Component {
       this.commands = response;
     })
     .catch((response) => {
-      console.error("Error fetching commands.json: " + response)
+      throw new Error("Error fetching commands.json: " + response)
     })
     this.text_colors = {
       written: "#00b7ff",
       mistaken: "#ff7a7a",
       unreached: "#b3b3b3"
     }
+  }
+  shouldComponentUpdate() {
+    if (this.commands === undefined) return false; // in case JSON fails to load
+    return true;
   }
   componentWillUpdate(nextProps, nextState) {
     if (!nextProps.render) return; // prevents stuff from doing if it doesnt have to
@@ -217,10 +221,6 @@ class SuggestionBox extends React.Component {
     });
   }
   render() {
-    // if (this.command === "stop") { // this is a test, will get removed and used in CommandLine component
-    //   let func = new Function(this.commands[0].command); // I could've used eval() too
-    //   func();
-    // } 
     if (this.props.render) {
       return (
         <div id="cmd_suggestion_box" className="cmd_suggestion_box center_absolute">

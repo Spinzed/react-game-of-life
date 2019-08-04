@@ -7,3 +7,5 @@ interface/*.js
 src/interface/*.js
 dist/
 build/
+app/static/react
+**/__pycache__

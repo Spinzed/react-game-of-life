@@ -38,7 +38,7 @@ canvas {
 .cmd_suggestion_box {
     position: absolute;
     width: 300px;
-    background: #464647;
+    background: #535354;
 }
 
 .cmd_suggestion_box ul {
@@ -53,7 +53,7 @@ canvas {
     display: flex;
     height: 52px;
     margin-bottom: 2px;
-    background: #505053;
+    background: #454546;
     color: white;
     top: 0;
     bottom: 0;

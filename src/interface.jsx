@@ -4,7 +4,6 @@ import CommandLine from './interface/command-line.jsx';
 import InfoToast from './interface/info-toast.jsx';
 import NewGamePrompt from './interface/new-game-prompt.jsx';
 import { Game as game } from './game.js';
-
 export default class Interface extends React.Component {
   constructor(props) {
     super(props);
