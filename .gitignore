@@ -7,5 +7,5 @@ interface/*.js
 src/interface/*.js
 dist/
 build/
-app/static/react
+app/static/webpack
 **/__pycache__
