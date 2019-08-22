@@ -1,0 +1,17 @@
+.App {
+    text-align: center;
+}
+
+.AppMain {
+    width: 1000px;
+    height: 100vh;
+    margin: 0 auto;
+    font-family: "Exo 2", Arial, Helvetica, sans-serif;
+}
+
+#title {
+    font-size: 2.8em;
+    color: #a8a8af;
+    padding-top: 1.4em;
+    margin-bottom: 2em;
+}

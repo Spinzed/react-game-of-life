@@ -1,0 +1,27 @@
+.CommandInput {
+    width: 100%;
+    height: 2.5em;
+    font-family: Consolas, Arial, Helvetica, sans-serif;
+    padding: 0;
+    border: 0;
+    background-color: transparent;
+    text-indent: 0.8rem;
+    box-sizing: border-box;
+    color: #aaaaaa;
+    font-size: 1rem;
+    font-weight: 120;
+    outline: none;
+
+}
+
+.CommandInput, .CommandInput:hover {
+    border: 1px solid #44484d;
+}
+
+.CommandInput:hover, .CommandInput:active {
+    outline: none;
+}
+
+.CommandInput:active {
+    border: 2px solid #38485c;
+}

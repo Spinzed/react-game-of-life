@@ -1,9 +1,9 @@
-export const Game = {
-  canvas: document.getElementById("game-canvas"),
+const Game = {
+  canvas: undefined, // will be initialized it later
   get canvas_ctx() {return this.canvas.getContext("2d")},
   seed: Math.round(Math.random() * 1000000),
   aliveCells: [],
-  cellWidth: 5,
+  cellWidth: 4,
   isStarted: false,
   speed: 10,
   isFrozen: false, // this is used to freeze the game when opening a new game prompt
@@ -14,6 +14,7 @@ export const Game = {
   },
 
   start() {
+    if (this.canvas == undefined) this.canvas = document.getElementById("gameCanvas");
     this.startTimeout();
     this.aliveCells = [];
     this.readyCanvas();
@@ -106,7 +107,7 @@ export const Game = {
   drawCells() {
     this.canvas_ctx.fillStyle = '#272727';
     this.aliveCells.forEach(cell => {
-      this.canvas_ctx.fillRect(cell.x * (this.cellWidth + 1) + 1, cell.y * (this.cellWidth + 1) + 1, 5, 5);
+      this.canvas_ctx.fillRect(cell.x * (this.cellWidth + 1) + 1, cell.y * (this.cellWidth + 1) + 1, this.cellWidth, this.cellWidth);
     });
   },
 
@@ -202,3 +203,5 @@ export const Game = {
     return x - Math.floor(x);
   }
 }
+
+export default Game;

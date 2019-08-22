@@ -6,6 +6,12 @@ module.exports = {
     path: __dirname + "/app/static/webpack",
     filename: "bundle.js"
   },
+  resolve: {
+    modules: [
+      path.resolve(__dirname, './src'),
+      path.resolve(__dirname, './node_modules')
+    ]
+  },
   module: {
     rules: [
       {
@@ -13,12 +19,36 @@ module.exports = {
         exclude: /node_modules/,
         loader: "babel-loader",
         query: {
-          presets: ['@babel/react', '@babel/env'],
+          presets: ['@babel/react', '@babel/typescript', '@babel/env'],
         }
       },
       {
         test: /\.css$/,
-        use: "css-loader"
+        exclude: /\.module.css$/,
+        use: [
+          "style-loader",
+        {
+          loader: "css-loader",
+          options: {
+            modules: {
+              mode: "global"
+            }
+          }
+        }]
+      },
+      {
+        test: /\.module.css$/,
+        use: [
+          "style-loader",
+        {
+          loader: "css-loader",
+          options: {
+            modules: {
+              mode: 'local',
+              localIdentName: '[local]_[hash:base64:5]',
+            }
+          }
+        }]
       }
     ]
   },

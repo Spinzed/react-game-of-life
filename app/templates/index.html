@@ -2,17 +2,14 @@
 
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <link href="https://fonts.googleapis.com/css?family=Exo+2&display=swap" rel="stylesheet">
+    <link rel="icon" href="{{ url_for('static', filename='assets/favicon.ico') }}">
     <title>Game of Life</title>
 </head>
 
 <body>
-    <div id="interface"></div>
-    <div class="center_content">
-        <canvas id="game-canvas" width="1000" height="600"></canvas>
-    </div>
+    <div id="root"></div>
     <script src="{{ url_for('static', filename='webpack/bundle.js')}}"></script>
 </body>
 

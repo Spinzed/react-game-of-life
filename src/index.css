@@ -1,0 +1,19 @@
+body {
+    margin: 0;
+    background-color: #3c3e41;
+    overflow: hidden;
+    font-size: 14px;
+}
+
+.center_vertical {
+    margin: 0 auto;
+}
+
+ul {
+    list-style-type: none;
+    margin-block-start: 0;
+    margin-block-end: 0;
+    margin-inline-start: 0;
+    margin-inline-end: 0;
+    padding-inline-start: 0;
+}

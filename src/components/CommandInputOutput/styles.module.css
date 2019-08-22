@@ -1,0 +1,8 @@
+.CommandInputOutput {
+    position: sticky;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    background-color: rgba(31, 31, 31, 0.5);
+    text-align: left;
+}

@@ -1,0 +1,44 @@
+.OutputLogs {
+    text-align: left;
+    font-size: 0.9rem;
+    max-height: 15em;
+    overflow: auto;
+}
+
+.OutputLogs::-webkit-scrollbar {
+    width: 12px;
+}
+
+.OutputLogs::-webkit-scrollbar-track {
+    background: #3d3d3d;
+}
+
+.OutputLogs::-webkit-scrollbar-thumb {
+    background: #505050;
+}
+
+.OutputLogs::-webkit-scrollbar-thumb:hover {
+    background: #5a5a5a;
+}
+
+.OutputLogs::-webkit-scrollbar-thumb:active {
+    background: #646464;
+}
+
+.OutputLogsFragment {
+    position: relative;
+    height: 2em;
+    font-size: 0.9rem;
+    text-indent: 0.8rem;
+    font-family: Consolas, Arial, Helvetica, sans-serif;
+    color: #929292;
+}
+
+.OutputLogsFragment > p {
+    position: absolute;
+    height: min-content;
+    margin: auto;
+    top: 0;
+    width: 100%;
+    bottom: 0;
+}
