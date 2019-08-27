@@ -1,8 +1,9 @@
 .OutputLogs {
     text-align: left;
-    font-size: 0.9rem;
-    max-height: 15em;
+    font-size: inherit;
+    font-family: inherit;
     overflow: auto;
+    max-height: inherit;
 }
 
 .OutputLogs::-webkit-scrollbar {
@@ -25,17 +26,18 @@
     background: #646464;
 }
 
-.OutputLogsFragment {
+.OutputLogs li {
     position: relative;
+    display: flex;
     height: 2em;
     font-size: 0.9rem;
+    font-family: inherit;
     text-indent: 0.8rem;
-    font-family: Consolas, Arial, Helvetica, sans-serif;
     color: #929292;
 }
 
-.OutputLogsFragment > p {
-    position: absolute;
+.OutputLogs li p {
+    position: relative;
     height: min-content;
     margin: auto;
     top: 0;

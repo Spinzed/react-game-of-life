@@ -1,6 +1,6 @@
 import React from "react";
 import styles from "./styles.module.css";
-import Commands from "./commands";
+import Commands from "../commands";
 import { useDispatch } from "react-redux";
 import { setInputValue, appendLogs } from "actions";
 
@@ -10,55 +10,49 @@ const CommandInput = props => {
     dispatch(setInputValue(event.target.value));
   };
   React.useEffect(() => {
-    function getArgType(arg) {
-      let start = arg[0];
-      let end = arg[arg.length - 1]
-      if (start === "<" && end === ">") {
-        return "number";
-      } else if (start === "[" && end === "]") {
-        return "string";
-      } else {
-        throw new Error("Error: unknown argument type");
-      }
-    }
-
     function onKeyDown(event) {
       if (event.key === "Enter") {
         if (event.target.value === "") return;
-        let input_args = event.target.value
+        let inputedArgs = event.target.value
           .toLowerCase()
           .trimRight()
           .split(" ")
           .filter(arg => arg !== "");
-        let input_command = input_args.shift();
+        let inputedCommand = inputedArgs.shift();
 
         new Promise((resolve, reject) => {
           Commands.forEach(command => {
             command.aliases.forEach(alias => {
-              if (input_command === alias) {
-                command.args.forEach((arg, i) => {
-                  let shouldBe = getArgType(arg);
-                  let isOf = typeof(input_args[i]);
-                  if (shouldBe !== isOf) {
-                    reject("\"" + arg + "\" should be of type " + shouldBe, ", not " + isOf);
-                  };
-                });
-                resolve(input_command);
-                command.command(input_args);
-              }
+              if (alias !== inputedCommand) return;
+              let checkResponse = command.checkArgs(inputedArgs);
+              checkResponse.status == "passed"
+                ? resolve({ alias: alias, command: command, args: inputedArgs })
+                : reject(checkResponse.message);
             });
           });
           reject("Unknown command");
-        })
-        .then(resolvedMessage => {
-          console.log("resolved")
-          dispatch(appendLogs("executed","Command has been executed: " + resolvedMessage));
-        }, rejectedMessage => {
-          console.log("rejected")
-          dispatch(appendLogs("rejected","Command execution has failed: " + rejectedMessage));
-        });
-        
+        }).then(
+          response => {
+            response.command.command(response.args);
+            dispatch(
+              appendLogs(
+                "executed",
+                "Command has been executed: " + response.alias
+              )
+            );
+          },
+          rejectedMessage => {
+            dispatch(
+              appendLogs(
+                "rejected",
+                "Command execution has failed: " + rejectedMessage
+              )
+            );
+          }
+        );
+
         event.target.value = "";
+        dispatch(setInputValue(event.target.value));
       }
     }
     props.inputRef.current.focus();

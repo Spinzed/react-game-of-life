@@ -7,7 +7,7 @@
     background-color: transparent;
     text-indent: 0.8rem;
     box-sizing: border-box;
-    color: #aaaaaa;
+    color: #dadada;
     font-size: 1rem;
     font-weight: 120;
     outline: none;
@@ -15,7 +15,7 @@
 }
 
 .CommandInput, .CommandInput:hover {
-    border: 1px solid #44484d;
+    border: 1px solid #51575f;
 }
 
 .CommandInput:hover, .CommandInput:active {
@@ -23,5 +23,5 @@
 }
 
 .CommandInput:active {
-    border: 2px solid #38485c;
+    border: 2px solid #344861;
 }

@@ -15,7 +15,7 @@ const OutputLogs = () => {
         {history.map(
           (element, i) =>
             history.length - i <= 30 && (
-              <li key={element.id} className={styles.OutputLogsFragment}>
+              <li key={element.id}>
                 <p>{element.message}</p>
               </li>
             )

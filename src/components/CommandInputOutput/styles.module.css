@@ -1,8 +1,16 @@
 .CommandInputOutput {
     position: sticky;
+    width: 100%;
     left: 0;
     bottom: 0;
-    width: 100%;
+    font-family: Consolas, Arial, Helvetica, sans-serif;
     background-color: rgba(31, 31, 31, 0.5);
     text-align: left;
+}
+
+.outputs {
+    position: relative;
+    max-height: 15em;
+    font-size: 0.9rem;
+    font-family: inherit;
 }
