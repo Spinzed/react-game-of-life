@@ -1,12 +1,12 @@
 const Game = {
-  canvas: undefined, // will be initialized it later
-  get canvas_ctx() {return this.canvas.getContext("2d")},
+  canvas: undefined, // will be initialized later
+  get canvasCTX() { return this.canvas.getContext("2d") },
   seed: Math.round(Math.random() * 1000000),
   aliveCells: [],
-  cellWidth: 4,
+  CW: 4, // cell width
   isStarted: false,
   speed: 10,
-  isFrozen: false, // this is used to freeze the game when opening a new game prompt
+  isPaused: false, // this is used to freeze the game when opening a new game prompt
 
   newGame(newSeed) {
     this.seed = this.rand(newSeed);
@@ -15,40 +15,32 @@ const Game = {
 
   start() {
     if (this.canvas == undefined) this.canvas = document.getElementById("gameCanvas");
+    this.isStarted = true;
     this.startTimeout();
     this.aliveCells = [];
-    this.readyCanvas();
+    this.resetCanvas();
     this.setSpeed(this.speed);
 
-    this.pixelRange = 30;
+    this.PIXELRANGE = 30;
     let canvasW = parseInt(this.canvas.getAttribute("width"));
     let canvasH = parseInt(this.canvas.getAttribute("height"));
     for (let i = 0; i < 300; i++) {
-      let randX = Math.floor(this.rand(this.seed + i) * this.pixelRange);
-      let randY = Math.floor(this.rand(this.seed + 100 + i) * this.pixelRange);
-      let x = this.getX(canvasW / 2) + randX - (this.pixelRange / 2);
-      let y = this.getY(canvasH / 2) + randY - (this.pixelRange / 2);
+      let randX = Math.floor(this.rand(this.seed + i) * this.PIXELRANGE);
+      let randY = Math.floor(this.rand(this.seed + 100 + i) * this.PIXELRANGE);
+      let x = this.getX(canvasW / 2) + randX - (this.PIXELRANGE / 2);
+      let y = this.getY(canvasH / 2) + randY - (this.PIXELRANGE / 2);
       let cell = { x: x, y: y };
       this.aliveCells.push(cell);
     }
-
-    // HARDCODED FOR TESTING
-    // let cell = { x: 1, y: 1 };
-    // let cell2 = new Cell(40, 21);
-    // let cell3 = new Cell(40, 22);
-    // this.aliveCells.push(cell);
-    // HARDCODED FOR TESTING
-
     this.drawCells();
-    this.isStarted = true;
   },
 
   update() {
-    if (!this.isStarted && !this.isFrozen) return;
+    if (!this.isStarted && this.isPaused) return;
     let dead = [];
     let revived = [];
 
-    // VV revive eligible ded cells
+    // VV mark eligible ded cells
     this.aliveCells.forEach(aliveCell => {
       for (let x = aliveCell.x - 1; x < aliveCell.x + 2; x++) {
         for (let y = aliveCell.y - 1; y < aliveCell.y + 2; y++) {
@@ -60,55 +52,100 @@ const Game = {
       }
     });
 
-    // VV kill cells that have bad amount of neighbours
+    // VV mark cells that have bad amount of neighbours
     for (let i = 0; i < this.aliveCells.length; i++) {
       let cell = this.aliveCells[i];
       let boyz = this.getBoyzInDaHood(cell);
       if (boyz > 3 || boyz < 2) {
-        dead.push(i);
+        dead.push(cell);
       }
     }
 
     // VV Update lists
-    let timer = 0; // this was done for optimisation
-    dead.forEach(index => {
-      this.aliveCells.splice(index - timer, 1);
-      timer++;
+    dead.forEach(cell => {
+      this.killCell(cell);
     });
-    this.aliveCells = this.aliveCells.concat(revived);
+    revived.forEach(cell => {
+      this.reviveCell(cell);
+    })
 
-    this.drawCells();
+    // this.drawCells();
   },
 
-  readyCanvas() {
-    if (!this.isStarted) return;
-    this.canvas_ctx.fillStyle = '#969696';
-    this.canvas_ctx.fillRect(0, 0, this.canvas.clientWidth, this.canvas.clientHeight);
+  resetCanvas() {
+    if (this.isPaused) return;
+    this.canvasCTX.fillStyle = '#969696';
+    this.canvasCTX.fillRect(0, 0, this.canvas.clientWidth, this.canvas.clientHeight);
 
     // VV generate grid
-    this.canvas_ctx.fillStyle = '#646464';
-    for (let i = 0; i < this.canvas.clientWidth; i += this.cellWidth + 1) {
-      this.canvas_ctx.fillRect(i, 0, 1, this.canvas.clientHeight); // didnt use lines cuz of reasons
+    this.canvasCTX.fillStyle = '#646464';
+    for (let i = 0; i < this.canvas.clientWidth; i += this.CW + 1) {
+      this.canvasCTX.fillRect(i, 0, 1, this.canvas.clientHeight); // didnt use lines cuz of reasons
     }
 
-    for (let i = 0; i < this.canvas.clientHeight; i += this.cellWidth + 1) {
-      this.canvas_ctx.fillRect(0, i, this.canvas.clientWidth, 1); // didnt use lines cuz of reasons
+    for (let i = 0; i < this.canvas.clientHeight; i += this.CW + 1) {
+      this.canvasCTX.fillRect(0, i, this.canvas.clientWidth, 1); // didnt use lines cuz of reasons
     }
+  },
 
-    // VV old way of genrating the grid, very slow
-    // this.canvas_ctx.fillStyle = '#969696';
-    // for (let w = 0; w < this.canvas.clientWidth; w += 6) {
-    //   for (let h = 0; h < this.canvas.clientHeight; h += 6) {
-    //     this.canvas_ctx.fillRect(w + 1, h + 1, 5, 5);
-    //   }
-    // }
+  clear() {
+    // VV had to lose roference the original array because when I modify it,
+    //    it shortens and not all cells get deleted
+    [...this.aliveCells].forEach(cell => {
+      this.killCell(cell)
+    });
+    // this.update();
   },
 
   drawCells() {
-    this.canvas_ctx.fillStyle = '#272727';
+    this.canvasCTX.fillStyle = '#272727';
     this.aliveCells.forEach(cell => {
-      this.canvas_ctx.fillRect(cell.x * (this.cellWidth + 1) + 1, cell.y * (this.cellWidth + 1) + 1, this.cellWidth, this.cellWidth);
+      this.canvasCTX.fillRect(cell.x * (this.CW + 1) + 1, cell.y * (this.CW + 1) + 1, this.CW, this.CW);
     });
+  },
+
+  drawCell(cell) {
+    this.canvasCTX.fillStyle = '#272727';
+    this.canvasCTX.fillRect(cell.x * (this.CW + 1) + 1, cell.y * (this.CW + 1) + 1, this.CW, this.CW);
+  },
+
+  eraseCell(cell) {
+    this.canvasCTX.fillStyle = '#969696';
+    this.canvasCTX.fillRect(cell.x * (this.CW + 1) + 1, cell.y * (this.CW + 1) + 1, this.CW, this.CW);
+  },
+
+  reviveCellAtPx(xPix, yPix) {
+    let x = this.getX(xPix);
+    let y = this.getY(yPix);
+    this.reviveCell({ x: x, y: y });
+  },
+
+  reviveCell(cell) {
+    if (this.isAlive(cell)) return;
+    this.aliveCells.push(cell);
+    this.drawCell(cell)
+  },
+
+  killCellAtPx(xPix, yPix) {
+    let x = this.getX(xPix);
+    let y = this.getY(yPix);
+    this.killCell({ x: x, y: y });
+  },
+
+  killCell(cell) {
+    if (!this.isAlive(cell)) return;
+    this.aliveCells.splice(this.isAlive(cell) - 1, 1);
+    this.eraseCell(cell);
+  },
+
+  toggleCellByPx(xPix, yPix) {
+    let x = this.getX(xPix);
+    let y = this.getY(yPix);
+    if (this.isAlive(cell)) {
+      this.killCell(x, y);
+    } else {
+      this.reviveCell(x, y);
+    }
   },
 
   getBoyzInDaHood(cell) { // getNeighbours() :D
@@ -138,7 +175,7 @@ const Game = {
     clearInterval(this.speedLoop);
     let speed = 1000 / this.speed;
     this.speedLoop = setInterval(() => {
-      this.readyCanvas();
+      // this.resetCanvas();
       this.update();
     }, speed);
   },
@@ -148,29 +185,29 @@ const Game = {
   },
 
   getX(coord) { // transfer pixels to grid row
-    return Math.floor(coord / (this.cellWidth + 1)) + 1;
+    return Math.floor(coord / (this.CW + 1));
   },
 
   getY(coord) { // transfer pixels to grid column
-    return Math.floor(coord / (this.cellWidth + 1)) + 1;
+    return Math.floor(coord / (this.CW + 1));
   },
 
   stop() { // oh my what could this possibly do??
-    if (!this.isStarted) return; else {
-      this.isStarted = false;
+    if (this.isPaused) return; else {
+      this.isPaused = false;
       this.stopTimeout();
     }
   },
 
   continue() {
-    if (this.isStarted) return; else {
-      this.isStarted = true;
+    if (this.isPaused) return; else {
+      this.isPaused = true;
       this.startTimeout();
     }
   },
-  
+
   togglePause() {
-    if (this.isStarted) this.stop(); else this.continue();
+    if (this.isPaused) this.continue(); else this.stop();
   },
 
   restart() {
@@ -179,23 +216,21 @@ const Game = {
   },
 
   isAlive(cell) { // just a lil bit easier to use than the bottom one
-    let isAlive = false;
-    this.aliveCells.forEach(arrayCell => {
-      if (arrayCell.x === cell.x && arrayCell.y === cell.y) {
-        isAlive = true;
-      }
-    });
-    return isAlive;
+    let findings = this.aliveCells.findIndex(liveCell => {
+      if (liveCell.x === cell.x && liveCell.y === cell.y) return true;
+      return false;
+    })
+    return findings + 1;
   },
 
   isInList(cell, arr) {
-    let contains = false;
-    arr.forEach(arrayCell => {
+    for (let i = 0; i < arr.length; i++) {
+      const arrayCell = arr[i];
       if (arrayCell.x === cell.x && arrayCell.y === cell.y) {
-        contains = true;
+        return i + 1;
       }
-    });
-    return contains;
+    }
+    return false;
   },
 
   rand(seed) {

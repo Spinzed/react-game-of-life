@@ -1,0 +1,12 @@
+.Checkbox {
+    display: flex;
+    align-items: center;
+}
+
+.Checkbox > * {
+    display: inline-flex;
+}
+
+.Checkbox > div {
+    margin-right: 0.2em;
+}

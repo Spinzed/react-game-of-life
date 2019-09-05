@@ -1,6 +1,7 @@
 import React from "react";
 import GameCanvas from "./components/GameCanvas/GameCanvas.jsx";
 import CMDIO from "./components/CommandInputOutput/CommandInputOutput.jsx";
+import GameControls from "./components/GameControls/GameControls.jsx";
 import "./App.css";
 import { useSelector, useDispatch } from "react-redux";
 import { render, unrender } from "actions";
@@ -27,6 +28,7 @@ const App = () => {
           Conway's Game of Life
         </div>
         <GameCanvas />
+        <GameControls />
       </div>
       {renderCommandLine && <CMDIO inputRef={inputRef} />}
     </div>

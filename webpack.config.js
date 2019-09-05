@@ -17,10 +17,12 @@ module.exports = {
       {
         test: /\.js?/,
         exclude: /node_modules/,
-        loader: "babel-loader",
-        query: {
-          presets: ['@babel/react', '@babel/typescript', '@babel/env'],
-        }
+        loaders: ["cache-loader", {
+          loader: "babel-loader",
+          query: {
+            presets: ['@babel/react', '@babel/typescript', '@babel/env'],
+          }
+        }]
       },
       {
         test: /\.css$/,
@@ -54,7 +56,6 @@ module.exports = {
   },
   devServer: {
     contentBase: path.resolve(__dirname, '../app/static'), // TODO: fix this
-    compress: true,
     port: 8000
   },
   plugins: [

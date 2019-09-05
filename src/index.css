@@ -1,7 +1,7 @@
 body {
     margin: 0;
     background-color: #3c3e41;
-    overflow: hidden;
+    overflow: auto;
     font-size: 14px;
 }
 
@@ -16,4 +16,27 @@ ul {
     margin-inline-start: 0;
     margin-inline-end: 0;
     padding-inline-start: 0;
+}
+
+::-webkit-scrollbar {
+    width: 12px;
+}
+
+::-webkit-scrollbar-track {
+    background: #3d3d3d;
+}
+::-webkit-scrollbar-corner {
+    background: #2f2f2f;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #505050;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #5a5a5a;
+}
+
+::-webkit-scrollbar-thumb:active {
+    background: #646464;
 }

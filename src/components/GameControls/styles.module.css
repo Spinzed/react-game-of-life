@@ -1,0 +1,7 @@
+.GameControls {
+    position: relative;
+    display: flex;
+    font-size: 1rem;
+    margin: 1em;
+    background-color: #3a3a3a;
+}

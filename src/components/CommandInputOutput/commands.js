@@ -3,9 +3,9 @@ import Game from "game";
 const commands = [
   {
     aliases: ["new"],
-    args: [],
+    args: ["<seed>"],
     description: "Make a new game with specified seed",
-    command: null,
+    command: args => Game.newGame(args[0]),
     checkArgs: function (args) {
       return standardCheck(this.args, args);
     }
@@ -62,6 +62,15 @@ const commands = [
         // hardcoded yea yea ikr
       }
       return response;
+    }
+  },
+  {
+    aliases: ["clear", "flush"],
+    args: [],
+    description: "Clear the game canvas",
+    command: () => Game.clear(),
+    checkArgs: function (args) {
+      return standardCheck(this.args, args);
     }
   },
   {
