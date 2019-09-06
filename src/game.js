@@ -1,7 +1,7 @@
 const Game = {
   canvas: undefined, // will be initialized later
   get canvasCTX() { return this.canvas.getContext("2d") },
-  seed: Math.round(Math.random() * 1000000),
+  seed: window.location.pathname.split("/")[1] || Math.round(Math.random() * 1000000),
   aliveCells: [],
   CW: 4, // cell width
   isStarted: false,
@@ -17,7 +17,7 @@ const Game = {
     if (this.canvas == undefined) this.canvas = document.getElementById("gameCanvas");
     this.isStarted = true;
     this.startTimeout();
-    this.aliveCells = [];
+    this.clear();
     this.resetCanvas();
     this.setSpeed(this.speed);
 

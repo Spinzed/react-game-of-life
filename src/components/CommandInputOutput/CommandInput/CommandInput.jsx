@@ -33,13 +33,22 @@ const CommandInput = props => {
           reject("Unknown command");
         }).then(
           response => {
-            response.command.command(response.args);
-            dispatch(
-              appendLogs(
-                "executed",
-                "Command has been executed: " + response.alias
-              )
-            );
+            let commandResponse = response.command.command(response.args);
+            if (commandResponse !== undefined) {
+              dispatch(
+                appendLogs(
+                  "executed",
+                  commandResponse
+                )
+              );
+            } else {
+              dispatch(
+                appendLogs(
+                  "executed",
+                  "Command has been executed: " + response.alias
+                )
+              );
+            }
           },
           rejectedMessage => {
             dispatch(

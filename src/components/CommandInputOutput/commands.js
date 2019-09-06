@@ -41,7 +41,7 @@ const commands = [
     aliases: ["seed"],
     args: [],
     description: "Get the seed of the current game",
-    command: null,
+    command: () => "Seed: " + Game.seed,
     checkArgs: function (args) {
       return standardCheck(this.args, args);
     }
