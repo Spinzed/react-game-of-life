@@ -28,12 +28,13 @@ export const setInputValue = (value) => {
   }
 }
 
-export const appendLogs = (outcome, value) => {
+export const handleInput = (outcome, input, response) => {
   return {
-    type: "APPEND_LOGS",
+    type: "HANDLE_INPUT",
     outcome: outcome,
     payload: {
-      value: value
+      input: input,
+      response: response
     }
   }
 }

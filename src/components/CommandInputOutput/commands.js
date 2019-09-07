@@ -84,6 +84,7 @@ const commands = [
   }
 ]
 
+// I should move these elsewhere rly
 function standardCheck(functionArgs, toBeCheckedArgs) {
   let response = { status: "passed", message: "", argParts: [] };
   functionArgs.forEach((arg, i) => {
