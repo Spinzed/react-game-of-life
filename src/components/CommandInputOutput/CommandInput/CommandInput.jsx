@@ -12,9 +12,9 @@ const CommandInput = props => {
   const [cachedInputValue, setCachedInputValue] = React.useState("");
 
   const onValueChange = event => {
-    setActiveHistory(NaN);
     dispatch(setInputValue(event.target.value));
     setCachedInputValue(event.target.value);
+    setActiveHistory(NaN);
   };
   const onKeyDown = event => {
     if (event.key === "Enter") {
@@ -40,6 +40,8 @@ const CommandInput = props => {
         reject("Unknown command");
       }).then(
         response => {
+          if (typeof response.command.command !== "function")
+            throw new Error("Command not set");
           let commandResponse =
             response.command.command(response.args) ||
             "Command has been executed: " + response.alias;
@@ -54,6 +56,7 @@ const CommandInput = props => {
       event.target.value = "";
       dispatch(setInputValue(event.target.value));
       setCachedInputValue(event.target.value);
+      setActiveHistory(NaN);
     } else if (event.key == "ArrowUp") {
       event.preventDefault(); // this makes that the carret doesnt end up at the start of the input field
       let copy = activeHistory;
