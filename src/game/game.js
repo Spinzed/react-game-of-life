@@ -1,12 +1,16 @@
+import shapes from "./shapes";
+
 const Game = {
   canvas: undefined, // will be initialized later
   get canvasCTX() { return this.canvas.getContext("2d") },
   seed: window.location.pathname.split("/")[1] || Math.round(Math.random() * 1000000),
   aliveCells: [],
-  CW: 4, // cell width
+  previewCells: [],
   isStarted: false,
-  speed: 10,
   isPaused: false, // this is used to freeze the game when opening a new game prompt
+  CW: 4, // cell width
+  speed: 20,
+  generation: 0,
 
   newGame(newSeed) {
     this.seed = this.rand(newSeed);
@@ -17,7 +21,8 @@ const Game = {
     if (this.canvas == undefined) this.canvas = document.getElementById("gameCanvas");
     this.isStarted = true;
     this.isPaused = false;
-    this.startTimeout();
+    this.generation = 0;
+    this.startInterval();
     this.clear();
     this.resetCanvas();
     this.setSpeed(this.speed);
@@ -40,7 +45,8 @@ const Game = {
         for (let checkX = x - 1; checkX < x + 2; checkX++) {
           for (let checkY = yVal - 1; checkY < yVal + 2; checkY++) {
             let cell = { x: checkX, y: checkY };
-            if (this.getBoyzInDaHood(cell) === 3 && !this.isAlive(cell) && !this.isInList(cell, revived)) {
+            if (this.isInList(cell, revived)) continue;
+            if (this.getBoyzInDaHood(cell) === 3 && !this.isAlive(cell)) {
               if (revived[checkX] === undefined) revived[checkX] = [];
               revived[checkX].push(checkY);
             }
@@ -81,6 +87,7 @@ const Game = {
       }
     }
 
+    this.generation++;
     // this.drawCells();
   },
 
@@ -147,19 +154,15 @@ const Game = {
   },
 
   drawCell(cell) {
+    if (this.isInList(cell, this.previewCells)) return;
     this.canvasCTX.fillStyle = '#272727';
     this.canvasCTX.fillRect(cell.x * (this.CW + 1) + 1, cell.y * (this.CW + 1) + 1, this.CW, this.CW);
   },
 
   eraseCell(cell) {
+    if (this.isInList(cell, this.previewCells)) return;
     this.canvasCTX.fillStyle = '#969696';
     this.canvasCTX.fillRect(cell.x * (this.CW + 1) + 1, cell.y * (this.CW + 1) + 1, this.CW, this.CW);
-  },
-
-  reviveCellAtPx(xPix, yPix) {
-    let x = this.getX(xPix);
-    let y = this.getY(yPix);
-    this.reviveCell({ x: x, y: y });
   },
 
   reviveCell(cell) {
@@ -169,12 +172,6 @@ const Game = {
     this.drawCell(cell)
   },
 
-  killCellAtPx(xPix, yPix) {
-    let x = this.getX(xPix);
-    let y = this.getY(yPix);
-    this.killCell({ x: x, y: y });
-  },
-
   killCell(cell) {
     if (!this.isAlive(cell)) return;
     this.aliveCells[cell.x].splice(this.isAlive(cell) - 1, 1);
@@ -182,14 +179,67 @@ const Game = {
     this.eraseCell(cell);
   },
 
-  toggleCellByPx(xPix, yPix) {
-    let x = this.getX(xPix);
-    let y = this.getY(yPix);
+  toggleCell(x, y) {
     if (this.isAlive(cell)) {
       this.killCell(x, y);
     } else {
       this.reviveCell(x, y);
     }
+  },
+
+  loadShape(shapeName, x, y) { // loads the shape into the this.previewCells array
+    this.eraseShape();
+    shapes.forEach(shape => {
+      if (shape.name === shapeName) {
+        shape.cells.forEach(cell => {
+          let targetX = x + cell[0];
+          let targetY = y + cell[1];
+
+          if (this.previewCells[targetX] === undefined)
+            this.previewCells[targetX] = [];
+          if (!this.previewCells[targetX].includes(targetY))
+            this.previewCells[targetX].push(targetY);
+        });
+      }
+    });
+    this.drawShape();
+  },
+
+  drawShape() { // draws the shape in the canvas
+    // no futher optimizations needed because this isnt called as often
+    this.previewCells.forEach((row, x) => {
+      row.forEach(y => {
+        let cell = { x: x, y: y };
+        this.canvasCTX.fillStyle = "#083577";
+        this.canvasCTX.fillRect(cell.x * (this.CW + 1) + 1, cell.y * (this.CW + 1) + 1, this.CW, this.CW);
+      })
+    });
+  },
+
+  eraseShape() { // deletes the shape from the canvas
+    // VV This had to be done because it won't recolor the cell if it is in this.previewCells
+    //  array so it has to be cleared first. Losing the reference is not necesary since it checks
+    //  for values rather than references
+    let copy = [...this.previewCells];
+    copy.map(row => row != undefined ? [...row] : null);
+    this.previewCells = [];
+
+    copy.forEach((row, x) => {
+      if (row === undefined) return;
+      row.forEach(y => {
+        let cell = { x: x, y: y };
+        this.isAlive(cell) ? this.drawCell(cell) : this.eraseCell(cell);
+      })
+    });
+  },
+
+  applyShape() { // stamp the shape onto the array
+    this.previewCells.forEach((row, x)=> {
+      row.forEach(y => {
+        let cell = { x: x, y: y };
+        this.reviveCell(cell);
+      })
+    });
   },
 
   getBoyzInDaHood(cell) { // getNeighbours() :D
@@ -206,10 +256,10 @@ const Game = {
 
   setSpeed(newSpeed) {
     this.speed = newSpeed;
-    this.startTimeout();
+    this.startInterval();
   },
 
-  startTimeout() {
+  startInterval() {
     clearInterval(this.speedLoop);
     let speed = 1000 / this.speed;
     this.speedLoop = setInterval(() => {
@@ -218,7 +268,7 @@ const Game = {
     }, speed);
   },
 
-  stopTimeout() {
+  stopInterval() {
     clearInterval(this.speedLoop);
   },
 
@@ -233,14 +283,14 @@ const Game = {
   stop() { // oh my what could this possibly do??
     if (this.isPaused) return; else {
       this.isPaused = true;
-      this.stopTimeout();
+      this.stopInterval();
     }
   },
 
   continue() {
     if (!this.isPaused) return; else {
       this.isPaused = false;
-      this.startTimeout();
+      this.startInterval();
     }
   },
 
@@ -264,7 +314,7 @@ const Game = {
     return false;
   },
 
-  checkAlive() {
+  checkAlive() { // for debugging purposes
     let alive = [];
     for (let x = 0; x < this.aliveCells.length; x++) {
       const row = this.aliveCells[x];

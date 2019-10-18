@@ -1,6 +1,6 @@
 import React from "react";
 import styles from "./styles.module.css";
-import Commands from "../commands";
+import Commands, { tryParseToInt } from "../commands";
 import { useDispatch, useSelector } from "react-redux";
 import { setInputValue, handleInput } from "actions";
 
@@ -42,8 +42,9 @@ const CommandInput = props => {
         response => {
           if (typeof response.command.command !== "function")
             throw new Error("Command not set");
+          let parsedArgs = response.args.map(arg => tryParseToInt(arg)); 
           let commandResponse =
-            response.command.command(response.args) ||
+            response.command.command(parsedArgs) ||
             "Command has been executed: " + response.alias;
           dispatch(handleInput("executed", inputValue, commandResponse));
         },

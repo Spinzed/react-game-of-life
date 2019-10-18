@@ -1,7 +1,7 @@
 import { combineReducers } from "redux";
 import { renderCommandLine, decoy } from "./renderReducers";
 import { inputValue, outputLogHistory, inputedCommandHistory } from "./dataHoldingReducers";
-import { isPencilEnabled } from "./singleStateReducers";
+import { isPencilEnabled, activeShape } from "./singleStateReducers";
 
 const rootReducer = combineReducers({
   renderCommandLine: renderCommandLine,
@@ -9,7 +9,8 @@ const rootReducer = combineReducers({
   inputValue: inputValue,
   outputLogHistory: outputLogHistory,
   inputedCommandHistory: inputedCommandHistory,
-  isPencilEnabled: isPencilEnabled
+  isPencilEnabled: isPencilEnabled,
+  activeShape: activeShape
 });
 
 export default rootReducer;

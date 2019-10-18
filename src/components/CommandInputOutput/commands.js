@@ -81,6 +81,15 @@ const commands = [
     checkArgs: function (args) {
       return standardCheck(this.args, args);
     }
+  },
+  {
+    aliases: ["load"],
+    args: ["<fds>", "<sdd>"],
+    description: "Show Help menu",
+    command: args => Game.loadShape("test", args[0], args[1]),
+    checkArgs: function (args) {
+      return standardCheck(this.args, args);
+    }
   }
 ]
 
@@ -93,11 +102,11 @@ function standardCheck(functionArgs, toBeCheckedArgs) {
       response.status = "failed";
       response.message = "Too few arguments";
       response.argParts.push({ status: "unreached", content: arg });
-    } else if (typeof (parsed) === getArgType(arg)) {
+    } else if (typeof parsed === getArgType(arg)) {
       response.argParts.push({ status: "passed", content: arg });
     } else {
       response.status = "failed";
-      response.message = `${parsed} should be of type ${getArgType(arg)}, not ${typeof (parsed)}`,
+      response.message = `${parsed} should be of type ${getArgType(arg)}, not ${typeof parsed}`;
       response.argParts.push({
         status: "failed",
         content: arg
@@ -123,7 +132,7 @@ function getArgType(arg) {
   }
 }
 
-function tryParseToInt(arg) {
+export function tryParseToInt(arg) {
   let parsedArg = arg;
   if (!isNaN(parseInt(arg))) parsedArg = parseInt(arg);
   return parsedArg;

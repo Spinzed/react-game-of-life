@@ -9,6 +9,8 @@ const CanvasNode = props => (
     height="400"
     onMouseDown={props.onMouseDown}
     onMouseUp={props.onMouseUp}
+    onMouseMove={props.onMouseMove}
+    onContextMenu={props.onContextMenu}
   />
 );
 
